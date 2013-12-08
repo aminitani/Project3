@@ -18,8 +18,8 @@ namespace PrisonStep
 
         private float exterminateDelay = 0.0f;
 
-        private float moveSpeed = 100.0f;
-        private float panRate = 2;
+        private float moveSpeed = 1000.0f;
+        private float panRate = 4;
 
         private Camera camera;
         public Camera Camera { get { return camera; } }
@@ -36,9 +36,9 @@ namespace PrisonStep
         private Vector3 location = new Vector3(0, 0, 0);
         public Vector3 Location { get { return location; } set { location = value; } }
 
-        private int Head;
-        private int Arm2;
-        private int Eye;
+        private int headex;
+        private int arm2Index;
+        private int eyendex;
 
         private float eyeRot = 0.0f;
         private float armRot = 0.0f;
@@ -111,7 +111,7 @@ namespace PrisonStep
         /// </summary>
         private void SetPlayerTransform()
         {
-            transform = Matrix.CreateRotationY(horizontalOrientation);
+            transform = Matrix.CreateRotationX(verticalOrientation) * Matrix.CreateRotationY(horizontalOrientation);
             transform.Translation = location;
         }
 
@@ -120,9 +120,9 @@ namespace PrisonStep
         {
             dalek.LoadContent(content);
 
-            Head = dalek.Model.Bones.IndexOf(dalek.Model.Bones["Head"]);
-            Arm2 = dalek.Model.Bones.IndexOf(dalek.Model.Bones["Arm2"]);
-            Eye = dalek.Model.Bones.IndexOf(dalek.Model.Bones["Eye"]);
+            headex = dalek.Model.Bones.IndexOf(dalek.Model.Bones["Head"]);
+            arm2Index = dalek.Model.Bones.IndexOf(dalek.Model.Bones["Arm2"]);
+            eyendex = dalek.Model.Bones.IndexOf(dalek.Model.Bones["Eye"]);
 
             laserFire.LoadContent(content);
         }
@@ -161,6 +161,10 @@ namespace PrisonStep
                 double delta = deltaTotal;
 
                 dalek.Update(delta);
+
+                dalek.BoneTransforms[eyendex] = Matrix.CreateRotationX(verticalOrientation) * dalek.BindTransforms[eyendex];
+                dalek.BoneTransforms[arm2Index] = Matrix.CreateRotationX(verticalOrientation) * dalek.BindTransforms[arm2Index];
+                dalek.ComputeAbsoluteTransforms();
 
                 //
                 // Part 1:  Compute a new orientation
@@ -258,28 +262,32 @@ namespace PrisonStep
         }
 
 
-        public void RequestMovement(float horizontal, float vertical, double deltaTime)
+        public void AttempMovement(float horizontal, float vertical, double deltaTime)
         {
-            Vector3 newlocation = location + (vertical * Facing() + horizontal * Right()) * moveSpeed * (float)deltaTime;
+            Vector3 newlocation = location + (vertical * FacingWithoutY() + horizontal * Right()) * moveSpeed * (float)deltaTime;
             location = newlocation;
         }
 
 
-        public void RequestRotation(float horizontal, float vertical, double deltaTime)
+        public void AttemptRotation(float horizontal, float vertical, double deltaTime)
         {
             horizontalOrientation += -horizontal * panRate * (float)deltaTime;
+
+            float newVertOrientation = verticalOrientation + -vertical * panRate * (float)deltaTime;
+            if (newVertOrientation < verMaxRot && newVertOrientation > verMinRot)
+                verticalOrientation = newVertOrientation;
         }
 
 
-        public void RequestShoot()
+        public void AttemptShoot()
         {
             //can't fire more than 4/sec, wait for delay
             if (laserDelay > 0.0f)
                 return;
 
-            Matrix tempransform = Matrix.CreateRotationY(horizontalOrientation);
+            Matrix tempransform = Matrix.CreateRotationX(verticalOrientation) * Matrix.CreateRotationY(horizontalOrientation);
             //0 added speed for now, won't make a big difference
-            laserFire.FireLaser(location + dalek.AbsoTransforms[Arm2].Translation + 100 * Facing(), tempransform, 0);
+            laserFire.FireLaser(location + Vector3.Transform(dalek.AbsoTransforms[arm2Index].Translation, Matrix.CreateRotationY(horizontalOrientation)) + 100 * Facing(), tempransform, 0);
 
             //only fire one per quarter second
             laserDelay = 0.25f;
@@ -303,6 +311,14 @@ namespace PrisonStep
 
         public Vector3 Facing()
         {
+            //Vector3 ret = new Vector3((float)Math.Sin(horizontalOrientation), 0.0f, (float)Math.Cos(horizontalOrientation));
+            Vector3 ret = transform.Backward;
+            ret.Normalize();
+            return ret;
+        }
+
+        public Vector3 FacingWithoutY()
+        {
             Vector3 ret = new Vector3((float)Math.Sin(horizontalOrientation), 0.0f, (float)Math.Cos(horizontalOrientation));
             ret.Normalize();
             return ret;
@@ -310,7 +326,7 @@ namespace PrisonStep
 
         public Vector3 Right()
         {
-            Vector3 ret = Vector3.Cross(Facing(), new Vector3(0, 1, 0));
+            Vector3 ret = transform.Left;
             //already normal
             ret.Normalize();
             return ret;
