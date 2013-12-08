@@ -35,6 +35,14 @@ namespace PrisonStep
         public void Draw(GraphicsDeviceManager graphics, GameTime gameTime, Camera inCamera)
         {
             DrawModel(graphics, model, Matrix.CreateTranslation(position), gameTime, inCamera);
+            DrawModel(graphics, model, Matrix.CreateTranslation(position + new Vector3(2290, 0, 0)), gameTime, inCamera);
+            DrawModel(graphics, model, Matrix.CreateTranslation(position + new Vector3(-2290, 0, 0)), gameTime, inCamera);
+            DrawModel(graphics, model, Matrix.CreateTranslation(position + new Vector3(0, 0, 2290)), gameTime, inCamera);
+            DrawModel(graphics, model, Matrix.CreateTranslation(position + new Vector3(0, 0, -2290)), gameTime, inCamera);
+            DrawModel(graphics, model, Matrix.CreateTranslation(position + new Vector3(2290, 0, -2290)), gameTime, inCamera);
+            DrawModel(graphics, model, Matrix.CreateTranslation(position + new Vector3(-2290, 0, -2290)), gameTime, inCamera);
+            DrawModel(graphics, model, Matrix.CreateTranslation(position + new Vector3(2290, 0, 2290)), gameTime, inCamera);
+            DrawModel(graphics, model, Matrix.CreateTranslation(position + new Vector3(-2290, 0, 2290)), gameTime, inCamera);
         }
 
         private void DrawModel(GraphicsDeviceManager graphics, Model model, Matrix world, GameTime gameTime, Camera inCamera)
