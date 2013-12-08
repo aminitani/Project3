@@ -236,6 +236,11 @@
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="LaserBlast.FBX">
+      <Name>LaserBlast</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="Lights.fx">
       <Name>Lights</Name>
       <Importer>EffectImporter</Importer>
@@ -274,6 +279,13 @@
   <ItemGroup>
     <Compile Include="skybox_texture.jpg">
       <Name>skybox_texture</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="crosshair.png">
+      <Name>crosshair</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

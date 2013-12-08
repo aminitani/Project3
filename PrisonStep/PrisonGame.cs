@@ -56,10 +56,12 @@ namespace PrisonStep
         /// </summary>
         private Player player1;
         private Interface player1Interface;
+        private Vector3 player1Spawn = new Vector3(200, 0, 0);
         public Player Player { get { return player1; } }
 
         private Player player2;
         private Interface player2Interface;
+        private Vector3 player2Spawn = new Vector3(0, 0, 200);
         public Player Player2 { get { return player2; } }
 
         private PSLineDraw lineDraw;
@@ -86,12 +88,6 @@ namespace PrisonStep
         public float SlimeLevel { get { return slimeLevel; } }
 
         /// <summary>
-        /// the player's score
-        /// </summary>
-        private int score = 0;
-        public int Score {get {return score; } set { score = value; } }
-
-        /// <summary>
         /// random number generator
         /// </summary>
         private Random randNum = new Random();
@@ -100,8 +96,12 @@ namespace PrisonStep
         /// <summary>
         /// Score and UI fonts
         /// </summary>
-        private SpriteFont UIFont;
-        SpriteBatch spriteBatch;
+        private SpriteFont uIFont;
+        public SpriteFont UIFont { get { return uIFont; } }
+        private SpriteBatch spriteBatch;
+        public SpriteBatch SpriteBatch { get { return spriteBatch; } }
+        private Texture2D crosshairTexture;
+        public Texture2D CrosshairTexture { get { return crosshairTexture; } }
 
         private Skybox skybox;
 
@@ -139,10 +139,10 @@ namespace PrisonStep
 
             // Create a player object
             player1 = new Player(this, camera1);
-            player1.Location = new Vector3(0, 0, 0);
+            player1.Location = player1Spawn;
             player1Interface = new Interface(this, player1, PlayerIndex.One);
             player2 = new Player(this, camera2);
-            player2.Location = new Vector3(0, 0, 100);
+            player2.Location = player2Spawn;
             player2Interface = new Interface(this, player2, PlayerIndex.Two);
 
             //Particle system
@@ -205,7 +205,8 @@ namespace PrisonStep
             smokePlume.LoadContent(Content);
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            UIFont = Content.Load<SpriteFont>("UIFont");
+            uIFont = Content.Load<SpriteFont>("UIFont");
+            crosshairTexture = Content.Load<Texture2D>("crosshair");
 
             //bazooka.ObjectEffect = Content.Load<Effect>("PhibesEffect1");
             //bazooka.SetEffect();
@@ -283,11 +284,6 @@ namespace PrisonStep
 
         }
 
-        //private void HandleMovement(GameTime gameTime, KeyboardState ks, GamePadState GPS1, GamePadState GPS2)
-        //{
-        //    double deltaTime = gameTime.ElapsedGameTime.Seconds;
-
-        //}
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -298,7 +294,7 @@ namespace PrisonStep
             if (current == GameState.splash)
             {
                 spriteBatch.Begin();
-                spriteBatch.DrawString(UIFont, "If the aliens win, everyone will die.", new Vector2(10, 10), Color.White);
+                spriteBatch.DrawString(uIFont, "If the aliens win, everyone will die.", new Vector2(10, 10), Color.White);
                 spriteBatch.End();
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             }
@@ -307,14 +303,25 @@ namespace PrisonStep
                 graphics.GraphicsDevice.Clear(Color.Black);
                 GraphicsDevice.Viewport = camera1.Viewport;
                 DrawGame(gameTime, camera1);
+                //p1 score
+                spriteBatch.Begin();
+                spriteBatch.DrawString(uIFont, "Score: " + player1.Score.ToString(), new Vector2(10, 10), Color.White);
+                spriteBatch.End();
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
                 GraphicsDevice.Viewport = camera2.Viewport;
                 DrawGame(gameTime, camera2);
+                //p2 score
+                spriteBatch.Begin();
+                spriteBatch.DrawString(uIFont, "Score: " + player2.Score.ToString(), new Vector2(10, 10), Color.White);
+                spriteBatch.End();
+                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                 
             }
             else if (current == GameState.results)
             {
                 spriteBatch.Begin();
-                spriteBatch.DrawString(UIFont, "You are dead and all your friends are dead.", new Vector2(10, 10), Color.White);
+                spriteBatch.DrawString(uIFont, "You are dead and all your friends are dead.", new Vector2(10, 10), Color.White);
                 spriteBatch.End();
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             }
@@ -338,13 +345,6 @@ namespace PrisonStep
             GraphicsDevice.BlendState = BlendState.Opaque;
 
             base.Draw(gameTime);
-
-            //Show score and pies in bazooka
-            spriteBatch.Begin();
-            //spriteBatch.DrawString(UIFont, "Pies: " + (10 - totalPiesFired).ToString(), new Vector2(10, 10), Color.White);
-            spriteBatch.DrawString(UIFont, "Score: " + score.ToString(), new Vector2(10, 10), Color.White);
-            spriteBatch.End();
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
         }
 

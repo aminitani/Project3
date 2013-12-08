@@ -29,11 +29,6 @@ namespace PrisonStep
         /// </summary>
         private PrisonGame game;
 
-        //
-        // Player location information.  We keep a x/z location (y stays zero)
-        // and an orientation (which way we are looking).
-        //
-
         /// <summary>
         /// Player location in the prison. Only x/z are important. y still stay zero
         /// unless we add some flying or jumping behavior later on.
@@ -74,6 +69,16 @@ namespace PrisonStep
         private string playerRegion;
 
         /// <summary>
+        /// the player's score
+        /// </summary>
+        private int score = 0;
+        public int Score { get { return score; } set { score = value; } }
+
+        private LaserFire laserFire;
+
+        private float laserDelay = 0.0f;
+
+        /// <summary>
         /// The collision cylinder for the player
         /// </summary>
         private BoundingCylinder playerCollision;
@@ -89,9 +94,11 @@ namespace PrisonStep
             this.game = game;
             this.camera = inCamera;
             dalek = new AnimatedModel(game, "dalek");
-            SetPlayerTransform();
-
+            
             playerCollision = new BoundingCylinder(game, location);
+            laserFire = new LaserFire(game);
+
+            SetPlayerTransform();
         }
 
         public void Initialize()
@@ -116,6 +123,8 @@ namespace PrisonStep
             Head = dalek.Model.Bones.IndexOf(dalek.Model.Bones["Head"]);
             Arm2 = dalek.Model.Bones.IndexOf(dalek.Model.Bones["Arm2"]);
             Eye = dalek.Model.Bones.IndexOf(dalek.Model.Bones["Eye"]);
+
+            laserFire.LoadContent(content);
         }
 
         public string TestRegion(Vector3 v3)
@@ -130,6 +139,17 @@ namespace PrisonStep
         public void Update(GameTime gameTime)
         {
             double deltaTotal = gameTime.ElapsedGameTime.TotalSeconds;
+
+            laserFire.Update(gameTime);
+
+            if (laserDelay < 0.0f)
+            {
+                laserDelay = 0.0f;
+            }
+            else if (laserDelay > 0.0f)
+            {
+                laserDelay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
 
             float strafe = 0;
             float newOrientation = horizontalOrientation;
@@ -194,7 +214,6 @@ namespace PrisonStep
                 //bool collisionCamera = false;
 
 
-
                 //camera.Center = location + new Vector3(0, 100, 0);
                 //Vector3 newCameraLocation = location + new Vector3(300, 100, 0);
                 //camera.Eye = newCameraLocation;
@@ -254,6 +273,17 @@ namespace PrisonStep
 
         public void RequestShoot()
         {
+            //can't fire more than 4/sec, wait for delay
+            if (laserDelay > 0.0f)
+                return;
+
+            Matrix tempransform = Matrix.CreateRotationY(horizontalOrientation);
+            tempransform.Translation = location;
+            //0 added speed for now, won't make a big difference
+            laserFire.FireLaser(location + dalek.BindTransforms[Arm2].Translation, tempransform, 0);
+
+            //only fire one per quarter second
+            laserDelay = 0.25f;
         }
 
 
@@ -264,11 +294,12 @@ namespace PrisonStep
         /// <param name="gameTime"></param>
         public void Draw(GraphicsDeviceManager graphics, GameTime gameTime, Camera inCamera)
         {
-            Matrix transform = Matrix.CreateRotationY(horizontalOrientation);
-            transform.Translation = location;
+            Matrix tempransform = Matrix.CreateRotationY(horizontalOrientation);
+            tempransform.Translation = location;
 
-            dalek.Draw(graphics, gameTime, transform, inCamera.View, inCamera.Projection);
+            dalek.Draw(graphics, gameTime, tempransform, inCamera.View, inCamera.Projection);
 
+            laserFire.Draw(graphics, gameTime, inCamera);
         }
 
         public Vector3 Facing()

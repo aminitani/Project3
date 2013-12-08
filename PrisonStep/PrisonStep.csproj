@@ -120,6 +120,7 @@
     <Compile Include="ExplosionParticleSystem3d.cs" />
     <Compile Include="Ground.cs" />
     <Compile Include="Interface.cs" />
+    <Compile Include="LaserFire.cs" />
     <Compile Include="Particle3d.cs" />
     <Compile Include="ParticleSystem3d.cs" />
     <Compile Include="Player.cs" />
