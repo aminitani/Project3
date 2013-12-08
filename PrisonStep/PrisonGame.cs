@@ -306,6 +306,7 @@ namespace PrisonStep
                 //p1 score
                 spriteBatch.Begin();
                 spriteBatch.DrawString(uIFont, "Score: " + player1.Score.ToString(), new Vector2(10, 10), Color.White);
+                spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
                 spriteBatch.End();
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
@@ -314,6 +315,7 @@ namespace PrisonStep
                 //p2 score
                 spriteBatch.Begin();
                 spriteBatch.DrawString(uIFont, "Score: " + player2.Score.ToString(), new Vector2(10, 10), Color.White);
+                spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
                 spriteBatch.End();
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                 
