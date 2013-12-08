@@ -73,7 +73,7 @@ namespace PrisonStep
             if (GamePad.GetState(index).Triggers.Right > 0)
             {
                 //type is float
-                player.RequestShoot();
+                player.AttemptShoot();
             }
 
             if (GamePad.GetState(index).Triggers.Left > 0)
@@ -88,7 +88,7 @@ namespace PrisonStep
                 //type is vector2
                 //Call a function from the player change the camera angle
                 //pass Xfloat, Yfloat, and gameTime to function
-                player.RequestRotation(GamePad.GetState(index).ThumbSticks.Right.X,
+                player.AttemptRotation(GamePad.GetState(index).ThumbSticks.Right.X,
                     GamePad.GetState(index).ThumbSticks.Right.Y,
                     deltaTime);
             }
@@ -98,7 +98,7 @@ namespace PrisonStep
                 //type is vector2
                 //Call a function from the player to move themself
                 //pass Xfloat, Yfloat, and gameTime to function
-                player.RequestMovement(GamePad.GetState(index).ThumbSticks.Left.X,
+                player.AttempMovement(GamePad.GetState(index).ThumbSticks.Left.X,
                     GamePad.GetState(index).ThumbSticks.Left.Y,
                     deltaTime);
             }

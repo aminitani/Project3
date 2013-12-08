@@ -206,6 +206,12 @@ namespace PrisonStep
             model.CopyAbsoluteBoneTransformsTo(absoTransforms);
         }
 
+        public void ComputeAbsoluteTransforms()
+        {
+            model.CopyBoneTransformsFrom(boneTransforms);
+            model.CopyAbsoluteBoneTransformsTo(absoTransforms);
+        }
+
         private AnimationPlayer player = null;
 
         /// <summary>
