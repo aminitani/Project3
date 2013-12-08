@@ -278,9 +278,8 @@ namespace PrisonStep
                 return;
 
             Matrix tempransform = Matrix.CreateRotationY(horizontalOrientation);
-            tempransform.Translation = location;
             //0 added speed for now, won't make a big difference
-            laserFire.FireLaser(location + dalek.BindTransforms[Arm2].Translation, tempransform, 0);
+            laserFire.FireLaser(location + dalek.AbsoTransforms[Arm2].Translation + 100 * Facing(), tempransform, 0);
 
             //only fire one per quarter second
             laserDelay = 0.25f;

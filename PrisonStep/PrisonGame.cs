@@ -257,8 +257,6 @@ namespace PrisonStep
                 player1Interface.Update(gameTime);
                 player2Interface.Update(gameTime);
 
-                lineDraw.Clear();
-
                 skybox.Update(gameTime);
 
                 player1.Update(gameTime);
@@ -300,7 +298,11 @@ namespace PrisonStep
             else if (current == GameState.game)
             {
                 graphics.GraphicsDevice.Clear(Color.Black);
+
                 GraphicsDevice.Viewport = camera1.Viewport;
+                lineDraw.Clear();
+                //lineDraw.Camera = camera1;
+                //lineDraw.Crosshair(player1.Location, 200, Color.White);
                 DrawGame(gameTime, camera1);
                 //p1 score
                 spriteBatch.Begin();
@@ -310,6 +312,9 @@ namespace PrisonStep
                 GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
                 GraphicsDevice.Viewport = camera2.Viewport;
+                //lineDraw.Clear();
+                //lineDraw.Camera = camera2;
+                //lineDraw.Crosshair(player1.Location, 200, Color.White);
                 DrawGame(gameTime, camera2);
                 //p2 score
                 spriteBatch.Begin();
