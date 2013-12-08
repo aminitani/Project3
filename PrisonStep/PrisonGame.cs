@@ -69,6 +69,17 @@ namespace PrisonStep
         //private Vector3 player2Spawn = new Vector3(0, 0, 200);
         //public Player Player2 { get { return player2; } }
 
+
+        //Particle effects
+        private RedParticleSystem3d redParticleSystem;
+        public RedParticleSystem3d RedParticleSystem { get { return redParticleSystem; } }
+
+        private BlueParticleSystem3d blueParticleSystem;
+        public BlueParticleSystem3d BlueParticleSystem { get { return blueParticleSystem; } }
+
+        private GreenParticleSystem3d greenParticleSystem;
+        public GreenParticleSystem3d GreenParticleSystem { get { return greenParticleSystem; } }
+
         private PSLineDraw lineDraw;
 
         #endregion
@@ -103,12 +114,6 @@ namespace PrisonStep
         public Texture2D CrosshairTexture { get { return crosshairTexture; } }
 
         private Skybox skybox;
-
-        /// <summary>
-        /// Particle system business. Game components will use the particle system by accessing the game's copy of the particle effects.
-        /// </summary>
-        private SmokeParticleSystem3d smokePlume = null;
-        public SmokeParticleSystem3d SmokePlume { get { return smokePlume; } }
 
 
         /// <summary>
@@ -162,7 +167,14 @@ namespace PrisonStep
             //player2Interface = new Interface(this, player2, PlayerIndex.Two);
 
             //Particle system
-            smokePlume = new SmokeParticleSystem3d(9);
+            redParticleSystem = new RedParticleSystem3d(1);
+            redParticleSystem.Blended = false;
+
+            blueParticleSystem = new BlueParticleSystem3d(1);
+            blueParticleSystem.Blended = false;
+
+            greenParticleSystem = new GreenParticleSystem3d(1);
+            greenParticleSystem.Blended = false;
 
             // Some basic setup for the display window
             this.IsMouseVisible = true;
@@ -230,7 +242,10 @@ namespace PrisonStep
             //player2.LoadContent(Content);
             ground.LoadContent(Content);
 
-            smokePlume.LoadContent(Content);
+            //Particle system contents
+            redParticleSystem.LoadContent(Content);
+            blueParticleSystem.LoadContent(Content);
+            greenParticleSystem.LoadContent(Content);
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
             uIFont = Content.Load<SpriteFont>("UIFont");
@@ -301,6 +316,12 @@ namespace PrisonStep
 
                 ground.Update(gameTime);
 
+                /*particle system test*/
+                greenParticleSystem.AddParticles(player1.Location + new Vector3(0, 100, 0));
+                redParticleSystem.AddParticles(player1.Location + new Vector3(0, 100, 0));
+                blueParticleSystem.AddParticles(player1.Location + new Vector3(0, 100, 0));
+                /*************/
+
 
                 foreach (PlayerPackage pp in playerPackages)
                 {
@@ -310,7 +331,9 @@ namespace PrisonStep
                 //camera2.Update(gameTime);
 
                 //particle systems
-                smokePlume.Update(gameTime.ElapsedGameTime.TotalSeconds);
+                redParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
+                blueParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
+                greenParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
             }
             else if (current == GameState.results)
             {
@@ -393,6 +416,7 @@ namespace PrisonStep
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
+            skybox.Draw(graphics, gameTime, inCamera);
             ground.Draw(graphics, gameTime, inCamera);
 
             foreach (PlayerPackage pp in playerPackages)
@@ -402,9 +426,9 @@ namespace PrisonStep
             //player1.Draw(graphics, gameTime, inCamera);
             //player2.Draw(graphics, gameTime, inCamera);
 
-            smokePlume.Draw(GraphicsDevice, inCamera);
-
-            skybox.Draw(graphics, gameTime, inCamera);
+            redParticleSystem.Draw(GraphicsDevice, inCamera);
+            blueParticleSystem.Draw(GraphicsDevice, inCamera);
+            greenParticleSystem.Draw(GraphicsDevice, inCamera);
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.BlendState = BlendState.Opaque;
@@ -413,7 +437,7 @@ namespace PrisonStep
 
         }
 
-        public void DrawModel(GraphicsDeviceManager graphics, Model model, Matrix world, Camera inCamera)
+        /*public void DrawModel(GraphicsDeviceManager graphics, Model model, Matrix world, Camera inCamera)
         {
             Matrix[] transforms = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(transforms);
@@ -429,6 +453,6 @@ namespace PrisonStep
                 }
                 mesh.Draw();
             }
-        }
+        }*/
     }
 }

@@ -29,7 +29,7 @@ namespace PrisonStep
         Vector3 up = new Vector3(0, 1, 0);
         float fov = MathHelper.ToRadians(35);
         float znear = 10;
-        float zfar = 10000;
+        float zfar = 100000;
 
         Matrix view;
         Matrix projection;
