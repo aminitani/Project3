@@ -54,11 +54,13 @@ namespace PrisonStep
         /// <summary>
         /// The player in your game is modeled with this class
         /// </summary>
-        private Player player;
-        public Player Player { get { return player; } }
+        private Player player1;
+        private Interface player1Interface;
+        public Player Player { get { return player1; } }
 
         private Player player2;
-        public Player Player2 { get { return player; } }
+        private Interface player2Interface;
+        public Player Player2 { get { return player2; } }
 
         private PSLineDraw lineDraw;
 
@@ -84,34 +86,10 @@ namespace PrisonStep
         public float SlimeLevel { get { return slimeLevel; } }
 
         /// <summary>
-        /// The bazooka victoria carries
-        /// </summary>
-        private AnimatedModel bazooka;
-        public AnimatedModel Bazooka { get { return bazooka; } }
-
-        /// <summary>
-        /// the transformation matrix for the bazooka
-        /// </summary>
-        private Matrix bazTransform;
-        public Matrix BazTransform { get { return bazTransform; } set { bazTransform = value; } }
-
-        /// <summary>
-        /// Tells us how many pies have been fired total before we must return to the control room
-        /// </summary>
-        private int totalPiesFired = 0;
-        public int TotalPiesFired { get { return totalPiesFired; } set { totalPiesFired = value; } }
-
-        /// <summary>
         /// the player's score
         /// </summary>
         private int score = 0;
         public int Score {get {return score; } set { score = value; } }
-
-        /// <summary>
-        /// Tells us if we need to return to the control room for more pies
-        /// </summary>
-        private bool needPies = false;
-        public bool NeedPies { get { return needPies; } set { needPies = value; } }
 
         /// <summary>
         /// random number generator
@@ -160,10 +138,12 @@ namespace PrisonStep
             ground = new Ground(this);
 
             // Create a player object
-            player = new Player(this, camera1);
-            player2.Location = new Vector3(0, 0, 0);
+            player1 = new Player(this, camera1);
+            player1.Location = new Vector3(0, 0, 0);
+            player1Interface = new Interface(this, player1, PlayerIndex.One);
             player2 = new Player(this, camera2);
-            player2.Location = new Vector3(0,0, 100);
+            player2.Location = new Vector3(0, 0, 100);
+            player2Interface = new Interface(this, player2, PlayerIndex.Two);
 
             //Particle system
             smokePlume = new SmokeParticleSystem3d(9);
@@ -189,7 +169,7 @@ namespace PrisonStep
             skybox.Initialize();
             camera1.Initialize();
             camera2.Initialize();
-            player.Initialize();
+            player1.Initialize();
             player2.Initialize();
             ground.Initialize();
 
@@ -197,9 +177,11 @@ namespace PrisonStep
             Viewport vp1 = GraphicsDevice.Viewport;
             Viewport vp2 = GraphicsDevice.Viewport;
             vp1.Height = (GraphicsDevice.Viewport.Height / 2);
+            vp1.Width = GraphicsDevice.Viewport.Width;
 
             vp2.Y = vp1.Height;
             vp2.Height = vp1.Height;
+            vp2.Width = vp1.Width;
 
             camera1.Viewport = vp1;
             camera2.Viewport = vp2;
@@ -216,9 +198,7 @@ namespace PrisonStep
         protected override void LoadContent()
         {
             skybox.LoadContent(Content);
-            bazooka = new AnimatedModel(this, "PieBazooka");
-            bazooka.LoadContent(Content);
-            player.LoadContent(Content);
+            player1.LoadContent(Content);
             player2.LoadContent(Content);
             ground.LoadContent(Content);
 
@@ -256,7 +236,8 @@ namespace PrisonStep
             base.Update(gameTime);
 
             KeyboardState keyboardState = Keyboard.GetState();
-            GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);
+            GamePadState gamePadState1 = GamePad.GetState(PlayerIndex.One);
+            GamePadState gamePadState2 = GamePad.GetState(PlayerIndex.Two);
 
             //
             // Update game components
@@ -272,11 +253,15 @@ namespace PrisonStep
                 if (keyboardState.IsKeyDown(Keys.Tab) && lastKeyboardState.IsKeyUp(Keys.Tab))
                     current = GameState.results;
 
+                //HandleMovement(gameTime, keyboardState, gamePadState1, gamePadState2);
+                player1Interface.Update(gameTime);
+                player2Interface.Update(gameTime);
+
                 lineDraw.Clear();
 
                 skybox.Update(gameTime);
 
-                player.Update(gameTime);
+                player1.Update(gameTime);
                 player2.Update(gameTime);
 
                 ground.Update(gameTime);
@@ -297,6 +282,12 @@ namespace PrisonStep
             lastKeyboardState = keyboardState;
 
         }
+
+        //private void HandleMovement(GameTime gameTime, KeyboardState ks, GamePadState GPS1, GamePadState GPS2)
+        //{
+        //    double deltaTime = gameTime.ElapsedGameTime.Seconds;
+
+        //}
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -336,7 +327,7 @@ namespace PrisonStep
 
             ground.Draw(graphics, gameTime, inCamera);
 
-            player.Draw(graphics, gameTime, inCamera);
+            player1.Draw(graphics, gameTime, inCamera);
             player2.Draw(graphics, gameTime, inCamera);
 
             smokePlume.Draw(GraphicsDevice, inCamera);
@@ -350,8 +341,8 @@ namespace PrisonStep
 
             //Show score and pies in bazooka
             spriteBatch.Begin();
-            spriteBatch.DrawString(UIFont, "Pies: " + (10 - totalPiesFired).ToString(), new Vector2(10, 10), Color.White);
-            spriteBatch.DrawString(UIFont, "Score: " + score.ToString(), new Vector2(10, 25), Color.White);
+            //spriteBatch.DrawString(UIFont, "Pies: " + (10 - totalPiesFired).ToString(), new Vector2(10, 10), Color.White);
+            spriteBatch.DrawString(UIFont, "Score: " + score.ToString(), new Vector2(10, 10), Color.White);
             spriteBatch.End();
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 

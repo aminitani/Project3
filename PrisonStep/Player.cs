@@ -18,6 +18,9 @@ namespace PrisonStep
 
         private float exterminateDelay = 0.0f;
 
+        private float moveSpeed = 100.0f;
+        private float panRate = 2;
+
         private Camera camera;
         public Camera Camera { get { return camera; } }
 
@@ -38,23 +41,27 @@ namespace PrisonStep
         private Vector3 location = new Vector3(0, 0, 0);
         public Vector3 Location { get { return location; } set { location = value; } }
 
+        private int Head;
+        private int Arm2;
+        private int Eye;
+
+        private float eyeRot = 0.0f;
+        private float armRot = 0.0f;
+        private float headRot = 0.0f;
+
         /// <summary>
         /// The player orientation as a simple angle
         /// </summary>
-        private float horizontalOrientation = (float)Math.PI * 2;
-
+        private float horizontalOrientation = (float)Math.PI / 2;
         private float verticalOrientation = 0.0f;
+        private float verMaxRot = (float)Math.PI / 4.0f;
+        private float verMinRot = -(float)Math.PI / 4.0f;
 
         /// <summary>
         /// The player transformation matrix. Places the player where they need to be.
         /// </summary>
         private Matrix transform;
         public Matrix Transform { get { return transform; } }
-
-        /// <summary>
-        /// The rotation rate in radians per second when player is rotating
-        /// </summary>
-        private float panRate = 2;
 
         private enum States {Start}
         private States state = States.Start;
@@ -63,10 +70,6 @@ namespace PrisonStep
         /// Our animated model
         /// </summary>
         private AnimatedModel dalek;
-
-        private int Head;
-        private int Arm2;
-        private int Eye;
 
         private string playerRegion;
 
@@ -131,7 +134,6 @@ namespace PrisonStep
             float strafe = 0;
             float newOrientation = horizontalOrientation;
             float deltaAngle = 0;
-            float speed = 0;
             float turnRate = 0;
 
             do
@@ -190,9 +192,19 @@ namespace PrisonStep
                 SetPlayerTransform();
 
                 //bool collisionCamera = false;
-                camera.Center = location + new Vector3(0,100,0);
-                Vector3 newCameraLocation = location + new Vector3(300, 100, 0);
+
+
+
+                //camera.Center = location + new Vector3(0, 100, 0);
+                //Vector3 newCameraLocation = location + new Vector3(300, 100, 0);
+                //camera.Eye = newCameraLocation;
+                camera.Center = location + new Vector3(0, 90, 0) + 1000 * Facing();
+                Vector3 newCameraLocation = location + new Vector3(0, 120, 0) +
+                    -70.0f * Right() - 200.0f * Facing();
                 camera.Eye = newCameraLocation;
+
+
+
                 //string regionCamera = TestRegion(newCameraLocation);
 
                 /*if (regionCamera == "")
@@ -227,6 +239,24 @@ namespace PrisonStep
         }
 
 
+        public void RequestMovement(float horizontal, float vertical, double deltaTime)
+        {
+            Vector3 newlocation = location + (vertical * Facing() + horizontal * Right()) * moveSpeed * (float)deltaTime;
+            location = newlocation;
+        }
+
+
+        public void RequestRotation(float horizontal, float vertical, double deltaTime)
+        {
+            horizontalOrientation += -horizontal * panRate * (float)deltaTime;
+        }
+
+
+        public void RequestShoot()
+        {
+        }
+
+
         /// <summary>
         /// This function is called to draw the player.
         /// </summary>
@@ -241,51 +271,21 @@ namespace PrisonStep
 
         }
 
-        private float GetDesiredSpeed(ref KeyboardState keyboardState, ref GamePadState gamePadState)
+        public Vector3 Facing()
         {
-            if (keyboardState.IsKeyDown(Keys.W))
-                return 1;
-            if (keyboardState.IsKeyDown(Keys.S))
-                return -1;
-
-            float speed = gamePadState.ThumbSticks.Right.Y;
-
-            return speed;
+            Vector3 ret = new Vector3((float)Math.Sin(horizontalOrientation), 0.0f, (float)Math.Cos(horizontalOrientation));
+            ret.Normalize();
+            return ret;
         }
 
-        private float GetDesiredTurnRate(ref KeyboardState keyboardState, ref GamePadState gamePadState)
+        public Vector3 Right()
         {
-            if (keyboardState.IsKeyDown(Keys.Left))
-            {
-                return panRate;
-            }
-
-            if (keyboardState.IsKeyDown(Keys.Right))
-            {
-                return -panRate;
-            }
-
-            return -gamePadState.ThumbSticks.Right.X * panRate;
+            Vector3 ret = Vector3.Cross(Facing(), new Vector3(0, 1, 0));
+            //already normal
+            ret.Normalize();
+            return ret;
         }
 
-        private float GetDesiredStrafe(ref KeyboardState keyboardState, ref GamePadState gamePadState)
-        {
-            if (keyboardState.IsKeyDown(Keys.A))
-                return 1;
 
-            if (keyboardState.IsKeyDown(Keys.D))
-                return -1;
-
-            float speed = gamePadState.ThumbSticks.Right.Y;
-
-            if (speed < 0)
-                speed = 0;
-
-            return speed;
-        }
-
-        public void PlayerAim()
-        {
-        }
     }
 }

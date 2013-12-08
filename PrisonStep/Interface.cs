@@ -42,36 +42,38 @@ namespace PrisonStep
         GamePadState lastGamepadState;
 
 
-        public Interface(PrisonGame game, Player player, int playerControllerIndex)
+        public Interface(PrisonGame game, Player player, PlayerIndex playerControllerIndex)
         {
             this.game = game;
             this.player = player;
+            this.index = playerControllerIndex;
 
-            if (playerControllerIndex == 1)
-            {
-                index = PlayerIndex.One;
-            }
-            else if (playerControllerIndex == 2)
-            {
-                index = PlayerIndex.Two;
-            }
-            else if (playerControllerIndex == 3)
-            {
-                index = PlayerIndex.Three;
-            }
-            else if (playerControllerIndex == 4)
-            {
-                index = PlayerIndex.Four;
-            }
+            //if (playerControllerIndex == 1)
+            //{
+            //    index = PlayerIndex.One;
+            //}
+            //else if (playerControllerIndex == 2)
+            //{
+            //    index = PlayerIndex.Two;
+            //}
+            //else if (playerControllerIndex == 3)
+            //{
+            //    index = PlayerIndex.Three;
+            //}
+            //else if (playerControllerIndex == 4)
+            //{
+            //    index = PlayerIndex.Four;
+            //}
         }
 
-        protected override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
+            double deltaTime = gameTime.ElapsedGameTime.TotalSeconds;
+
             if (GamePad.GetState(index).Triggers.Right > 0)
             {
                 //type is float
-                //Call a function from the player to shoot a laser
-                //pass float to function
+                player.RequestShoot();
             }
 
             if (GamePad.GetState(index).Triggers.Left > 0)
@@ -86,6 +88,9 @@ namespace PrisonStep
                 //type is vector2
                 //Call a function from the player change the camera angle
                 //pass Xfloat, Yfloat, and gameTime to function
+                player.RequestRotation(GamePad.GetState(index).ThumbSticks.Right.X,
+                    GamePad.GetState(index).ThumbSticks.Right.Y,
+                    deltaTime);
             }
 
             if (GamePad.GetState(index).ThumbSticks.Left != Vector2.Zero)
@@ -93,6 +98,9 @@ namespace PrisonStep
                 //type is vector2
                 //Call a function from the player to move themself
                 //pass Xfloat, Yfloat, and gameTime to function
+                player.RequestMovement(GamePad.GetState(index).ThumbSticks.Left.X,
+                    GamePad.GetState(index).ThumbSticks.Left.Y,
+                    deltaTime);
             }
 
             if (GamePad.GetState(index).DPad.Left != ButtonState.Pressed
@@ -131,7 +139,8 @@ namespace PrisonStep
             }
 
             lastGamepadState = GamePad.GetState(index);
-
         }
+
+
     }
 }

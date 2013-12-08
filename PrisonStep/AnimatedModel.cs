@@ -200,7 +200,7 @@ namespace PrisonStep
             //{
             //    boneTransforms[6] = Matrix.CreateRotationX(game.Player.AimOrient - game.Player.AimAngle) * bindTransforms[6];
             //}
-            game.Player.PlayerAim();
+            //game.Player.PlayerAim();
 
             model.CopyBoneTransformsFrom(boneTransforms);
             model.CopyAbsoluteBoneTransformsTo(absoTransforms);
