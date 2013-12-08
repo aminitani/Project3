@@ -12,9 +12,9 @@ namespace PrisonStep
     /// SmokePlumeParticleSystem is a specialization of ParticleSystem which sends up a
     /// plume of smoke. The smoke is blown to the right by the wind.
     /// </summary>
-    public class SmokeParticleSystem3d : ParticleSystem3d
+    public class GreenParticleSystem3d : ParticleSystem3d
     {
-        public SmokeParticleSystem3d(int howManyEffects)
+        public GreenParticleSystem3d(int howManyEffects)
             : base(howManyEffects)
         {
         }
@@ -25,10 +25,10 @@ namespace PrisonStep
         /// </summary>
         protected override void InitializeConstants()
         {
-            textureFilename = "smoke";
+            textureFilename = "greenParticle";
 
-            minInitialSpeed = 5;
-            maxInitialSpeed = 40;
+            minInitialSpeed = 0;
+            maxInitialSpeed = 0;
 
             // we don't want the particles to accelerate at all, aside from what we
             // do in our overriden InitializeParticle.
@@ -38,17 +38,17 @@ namespace PrisonStep
             // long lifetime, this can be changed to create thinner or thicker smoke.
             // tweak minNumParticles and maxNumParticles to complement the effect.
             minLifetime = 3.0f;
-            maxLifetime = 5.0f;
+            maxLifetime = 4.0f;
 
-            minScale = 20.0f;
-            maxScale = 40.0f;
+            minScale = 5.0f;
+            maxScale = 10.0f;
 
-            minNumParticles = 10;
-            maxNumParticles = 100;
+            minNumParticles = 75;
+            maxNumParticles = 200;
 
-            // rotate slowly, we want a fairly relaxed effect
-            minRotationSpeed = -MathHelper.PiOver4 / 2.0f;
-            maxRotationSpeed = MathHelper.PiOver4 / 2.0f;
+            // rotate
+            minRotationSpeed = -MathHelper.PiOver2;
+            maxRotationSpeed = MathHelper.PiOver2;
         }
 
         /// <summary>
@@ -60,14 +60,14 @@ namespace PrisonStep
         {
             float r = 0.1f;
 
-            Vector3 v = new Vector3(RandomBetween(-r, r), 1, RandomBetween(-r, r));
+            Vector3 v = new Vector3(RandomBetween(-r, r), 0, RandomBetween(-r, r));
             v.Normalize();
 
             return v;
         }
 
         /// <summary>
-        /// InitializeParticle is overridden to add the appearance of wind.
+        /// lol
         /// </summary>
         /// <param name="p">the particle to set up</param>
         /// <param name="where">where the particle should be placed</param>
@@ -77,7 +77,28 @@ namespace PrisonStep
 
             // the base is mostly good, but we want to simulate a little bit of wind
             // heading to the right.
-            p.Acceleration = p.Acceleration + new Vector3(ParticleSystem3d.RandomBetween(2, 8), 0, 0);
+            int i = Random.Next(7);
+            switch (i)
+            {
+                case (1):
+                    p.Velocity = p.Velocity + new Vector3(ParticleSystem3d.RandomBetween(50, 100), 0,0);
+                    break;
+                case (2):
+                    p.Velocity = p.Velocity + new Vector3(-ParticleSystem3d.RandomBetween(50, 100), 0, 0);
+                    break;
+                case (3):
+                    p.Velocity = p.Velocity + new Vector3(0, ParticleSystem3d.RandomBetween(50, 100), 0);
+                    break;
+                case (4):
+                    p.Velocity = p.Velocity + new Vector3(0, -ParticleSystem3d.RandomBetween(50, 100), 0);
+                    break;
+                case (5):
+                    p.Velocity = p.Velocity + new Vector3(0, 0, ParticleSystem3d.RandomBetween(50,100));
+                    break;
+                case (6):
+                    p.Velocity = p.Velocity + new Vector3(0, 0, -ParticleSystem3d.RandomBetween(50, 100));
+                    break;
+            }
         }
     }
 }
