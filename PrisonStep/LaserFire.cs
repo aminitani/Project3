@@ -86,6 +86,10 @@ namespace PrisonStep
                     updateCount = 0;
                 }
 
+                BoundingSphere bs = new BoundingSphere();
+                bs.Center = blast.position;
+                bs.Radius = 5;
+
                 //Decrease life of blast
                 blast.life -= delta;
                 if (blast.life <= 0)

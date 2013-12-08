@@ -16,6 +16,8 @@ namespace PrisonStep
     {
         #region Fields
 
+        const int MAXHEALTH = 100;
+
         private float exterminateDelay = 0.0f;
 
         private float moveSpeed = 1000.0f;
@@ -63,7 +65,7 @@ namespace PrisonStep
         private Matrix transform;
         public Matrix Transform { get { return transform; } }
 
-        private enum States {Start}
+        private enum States {Start, Dead}
         private States state = States.Start;
 
         /// <summary>
@@ -82,6 +84,9 @@ namespace PrisonStep
         private LaserFire laserFire;
 
         private float laserDelay = 0.0f;
+
+        private int health = MAXHEALTH;
+        public int Health { get { return health; } }
 
         /// <summary>
         /// The collision cylinder for the player
@@ -341,6 +346,20 @@ namespace PrisonStep
         {
             colorState = inColor;
             laserFire.ColorState = inColor;
+        }
+
+        public void IncrementHealth(int healthInc)
+        {
+            health += healthInc;
+            if (health <= 0)
+            {
+                health = 0;
+                state = States.Dead;
+            }
+            else if (health >= 100)
+            {
+                health = 100;
+            }
         }
     }
 }
