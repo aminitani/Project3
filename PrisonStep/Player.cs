@@ -44,6 +44,11 @@ namespace PrisonStep
         private float armRot = 0.0f;
         private float headRot = 0.0f;
 
+        public enum Colors { Red, Green, Blue }
+
+        private Colors colorState = Colors.Red;
+        public Colors ColorState { get { return colorState; } }
+
         /// <summary>
         /// The player orientation as a simple angle
         /// </summary>
@@ -332,6 +337,10 @@ namespace PrisonStep
             return ret;
         }
 
-
+        public void ChangeColor(Player.Colors inColor)
+        {
+            colorState = inColor;
+            laserFire.ColorState = inColor;
+        }
     }
 }

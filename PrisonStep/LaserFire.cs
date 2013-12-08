@@ -16,6 +16,7 @@ namespace PrisonStep
             public Matrix orientation;
             public float speed;
             public float life;
+            public Player.Colors color;
         }
 
         private PrisonGame game;
@@ -24,9 +25,12 @@ namespace PrisonStep
 
         private LinkedList<LaserBlast> laserBlasts = new LinkedList<LaserBlast>();
 
+        private Player.Colors colorState = Player.Colors.Blue;
+        public Player.Colors ColorState { get { return colorState; } set { colorState = value; } }
 
         public LinkedList<LaserBlast> LaserBlasts { get { return laserBlasts; } }
 
+        private int updateCount = 0;
 
         public LaserFire(PrisonGame game)
         {
@@ -65,6 +69,23 @@ namespace PrisonStep
                 Vector3 direction = Vector3.TransformNormal(new Vector3(0, 0, 1), blast.orientation);
                 blast.position += direction * blast.speed * delta;
 
+                if ( updateCount > 10)
+                {
+                    switch (colorState)
+                    {
+                        case (Player.Colors.Red):
+                            game.RedParticleSystem.AddParticles(blast.position);
+                            break;
+                        case (Player.Colors.Green):
+                            game.GreenParticleSystem.AddParticles(blast.position);
+                            break;
+                        case (Player.Colors.Blue):
+                            game.BlueParticleSystem.AddParticles(blast.position);
+                            break;
+                    }
+                    updateCount = 0;
+                }
+
                 //Decrease life of blast
                 blast.life -= delta;
                 if (blast.life <= 0)
@@ -74,6 +95,7 @@ namespace PrisonStep
                 }
 
                 blastNode = nextBlast;
+                updateCount++;
             }
         }
 
@@ -117,6 +139,7 @@ namespace PrisonStep
             blast.orientation = orientation;
             blast.speed = 3000.0f + speed;      // cm/sec
             blast.life = 2.0f;          // 2 seconds
+            blast.color = this.colorState;
 
             laserBlasts.AddLast(blast);
         }

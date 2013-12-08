@@ -151,13 +151,13 @@ namespace PrisonStep
             player2Interface = new Interface(this, player2, PlayerIndex.Two);
 
             //Particle system
-            redParticleSystem = new RedParticleSystem3d(1);
+            redParticleSystem = new RedParticleSystem3d(8);
             redParticleSystem.Blended = false;
 
-            blueParticleSystem = new BlueParticleSystem3d(1);
+            blueParticleSystem = new BlueParticleSystem3d(8);
             blueParticleSystem.Blended = false;
 
-            greenParticleSystem = new GreenParticleSystem3d(1);
+            greenParticleSystem = new GreenParticleSystem3d(8);
             greenParticleSystem.Blended = false;
 
             // Some basic setup for the display window
@@ -278,13 +278,6 @@ namespace PrisonStep
                 player2.Update(gameTime);
 
                 ground.Update(gameTime);
-
-                /*particle system test*/
-                greenParticleSystem.AddParticles(player1.Location + new Vector3(0, 100, 0));
-                redParticleSystem.AddParticles(player1.Location + new Vector3(0, 100, 0));
-                blueParticleSystem.AddParticles(player1.Location + new Vector3(0, 100, 0));
-                /*************/
-
 
                 camera1.Update(gameTime);
                 camera2.Update(gameTime);

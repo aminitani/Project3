@@ -37,14 +37,14 @@ namespace PrisonStep
 
             // long lifetime, this can be changed to create thinner or thicker smoke.
             // tweak minNumParticles and maxNumParticles to complement the effect.
-            minLifetime = 3.0f;
-            maxLifetime = 4.0f;
+            minLifetime = 0.1f;
+            maxLifetime = 1.0f;
 
             minScale = 5.0f;
             maxScale = 10.0f;
 
-            minNumParticles = 75;
-            maxNumParticles = 200;
+            minNumParticles = 2;
+            maxNumParticles = 3;
 
             // rotate
             minRotationSpeed = -MathHelper.PiOver2;
