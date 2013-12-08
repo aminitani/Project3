@@ -290,28 +290,30 @@ namespace PrisonStep
             assetClips[name] = new AssetClip(name, asset);
         }
 
-        /// <summary>
-        /// Replace the model effect with a new effect we load ourselves
-        /// </summary>
-        public void SetEffect()
-        {
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                foreach (ModelMeshPart part in mesh.MeshParts)
-                {
-                    //BasicEffect bEffect = part.Effect as BasicEffect;
-                    Vector3 diff = part.Effect.Parameters["DiffuseColor"].GetValueVector3();
-                    part.Effect = objectEffect.Clone();
+        ///// <summary>
+        ///// Replace the model effect with a new effect we load ourselves
+        ///// </summary>
+        //public void SetEffect()
+        //{
+        //    foreach (ModelMesh mesh in model.Meshes)
+        //    {
+        //        foreach (ModelMeshPart part in mesh.MeshParts)
+        //        {
+        //            //BasicEffect bEffect = part.Effect as BasicEffect;
+        //            Vector3 diff = part.Effect.Parameters["DiffuseColor"].GetValueVector3();
+        //            part.Effect = objectEffect.Clone();
 
-                    Matrix temp = Matrix.CreateTranslation(game.Camera.Center);
+        //            Matrix temp = Matrix.CreateTranslation(game.Camera.Center);
 
-                    part.Effect.Parameters["DiffuseColor"].SetValue(diff);
-                    part.Effect.Parameters["World"].SetValue(temp);
-                    part.Effect.Parameters["View"].SetValue(game.Camera.View);
-                    part.Effect.Parameters["Projection"].SetValue(game.Camera.Projection);
-                    part.Effect.Parameters["Slime"].SetValue(game.SlimeLevel);
-                }
-            }
-        }
+        //            part.Effect.Parameters["DiffuseColor"].SetValue(diff);
+        //            part.Effect.Parameters["World"].SetValue(temp);
+        //            part.Effect.Parameters["View"].SetValue(game.Camera.View);
+        //            part.Effect.Parameters["Projection"].SetValue(game.Camera.Projection);
+        //            part.Effect.Parameters["Slime"].SetValue(game.SlimeLevel);
+        //        }
+        //    }
+        //}
+
+
     }
 }

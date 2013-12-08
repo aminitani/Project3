@@ -28,9 +28,10 @@ namespace PrisonStep
         /// <summary>
         /// The camera we use
         /// </summary>
-        private Camera camera1;
+        //private Camera camera1;
 
-        private Camera camera2;
+        //private Camera camera2;
+
 
         /// <summary>
         /// Splash screen states
@@ -51,18 +52,22 @@ namespace PrisonStep
         private Ground ground;
         public Ground Ground { get { return ground; } }
 
-        /// <summary>
-        /// The player in your game is modeled with this class
-        /// </summary>
-        private Player player1;
-        private Interface player1Interface;
-        private Vector3 player1Spawn = new Vector3(200, 0, 0);
-        public Player Player { get { return player1; } }
+        private List<PlayerPackage> playerPackages = new List<PlayerPackage>();
 
-        private Player player2;
-        private Interface player2Interface;
-        private Vector3 player2Spawn = new Vector3(0, 0, 200);
-        public Player Player2 { get { return player2; } }
+        //private List<Player> players;
+        //private List<Camera> cameras;
+        //private List<Interface> interfaces;
+        //private List<Vector3> spawns;
+
+        //private Player player1;
+        //private Interface player1Interface;
+        //private Vector3 player1Spawn = new Vector3(200, 0, 0);
+        //public Player Player { get { return player1; } }
+
+        //private Player player2;
+        //private Interface player2Interface;
+        //private Vector3 player2Spawn = new Vector3(0, 0, 200);
+        //public Player Player2 { get { return player2; } }
 
         private PSLineDraw lineDraw;
 
@@ -73,19 +78,13 @@ namespace PrisonStep
         /// <summary>
         /// The game camera
         /// </summary>
-        public Camera Camera { get { return camera1; } }
+        //public Camera Camera { get { return camera1; } }
 
-        public Camera Camera2 { get { return camera2; } }
+        //public Camera Camera2 { get { return camera2; } }
 
         public PSLineDraw LineDraw { get { return lineDraw; } }
 
         #endregion
-
-        private bool slimed = false;
-        public bool Slimed { get { return slimed; } set { slimed = value; } }
-
-        private float slimeLevel = 1.0f;
-        public float SlimeLevel { get { return slimeLevel; } }
 
         /// <summary>
         /// random number generator
@@ -121,29 +120,46 @@ namespace PrisonStep
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-
             skybox = new Skybox(this);
-            // Camera settings
 
-            camera1 = new Camera(graphics);
-            camera1.Eye = new Vector3(800, 180, 1053);
-            camera1.Center = new Vector3(275, 90, 1053);
-            camera1.FieldOfView = MathHelper.ToRadians(42);
+            // player
+            for (int i = 0; i < 2; i++)
+            {
+                PlayerPackage templayerPackage = new PlayerPackage();
+                
+                Camera tempCam = new Camera(graphics);
+                tempCam.Eye = new Vector3(800, 180, 1053);
+                tempCam.Center = new Vector3(275, 90, 1053);
+                tempCam.FieldOfView = MathHelper.ToRadians(42);
+                templayerPackage.Camera = tempCam;
 
-            camera2 = new Camera(graphics);
-            camera1.Eye = new Vector3(800, 180, 1053);
-            camera1.Center = new Vector3(275, 90, 1053);
-            camera1.FieldOfView = MathHelper.ToRadians(42);
+                templayerPackage.Spawn = new Vector3(0, 0, 0);
+
+                Player templayer = new Player(this, tempCam);
+                templayer.Location = templayerPackage.Spawn;
+                templayerPackage.Player = templayer;
+
+                //FIX ME
+                Interface templayerInterface = null;
+                if (i == 0)
+                    templayerInterface = new Interface(this, templayer, PlayerIndex.One);
+                else if (i == 1)
+                    templayerInterface = new Interface(this, templayer, PlayerIndex.Two);
+
+                templayerPackage.PlayerInterface = templayerInterface;
+
+                playerPackages.Add(templayerPackage);
+            }
 
             ground = new Ground(this);
 
             // Create a player object
-            player1 = new Player(this, camera1);
-            player1.Location = player1Spawn;
-            player1Interface = new Interface(this, player1, PlayerIndex.One);
-            player2 = new Player(this, camera2);
-            player2.Location = player2Spawn;
-            player2Interface = new Interface(this, player2, PlayerIndex.Two);
+            //player1 = new Player(this, camera1);
+            //player1.Location = player1Spawn;
+            //player1Interface = new Interface(this, player1, PlayerIndex.One);
+            //player2 = new Player(this, camera2);
+            //player2.Location = player2Spawn;
+            //player2Interface = new Interface(this, player2, PlayerIndex.Two);
 
             //Particle system
             smokePlume = new SmokeParticleSystem3d(9);
@@ -154,7 +170,7 @@ namespace PrisonStep
 			this.graphics.PreferredBackBufferWidth = 1024;
 			this.graphics.PreferredBackBufferHeight = 768;
 
-            lineDraw = new PSLineDraw(this, Camera);
+            //lineDraw = new PSLineDraw(this, Camera);
             this.Components.Add(lineDraw);
         }
 
@@ -166,8 +182,12 @@ namespace PrisonStep
         /// </summary>
         protected override void Initialize()
         {
-            player1.Initialize();
-            player2.Initialize();
+            foreach (PlayerPackage pp in playerPackages)
+            {
+                pp.Player.Initialize();
+            }
+            //player1.Initialize();
+            //player2.Initialize();
             ground.Initialize();
             skybox.Initialize();
 
@@ -181,11 +201,16 @@ namespace PrisonStep
             vp2.Height = vp1.Height;
             vp2.Width = vp1.Width;
 
-            camera1.Viewport = vp1;
-            camera2.Viewport = vp2;
+            //FIX ME
+            playerPackages[0].Camera.Viewport = vp1;
+            playerPackages[1].Camera.Viewport = vp2;
+            //camera1.Viewport = vp1;
+            //camera2.Viewport = vp2;
 
-            camera1.Initialize();
-            camera2.Initialize();
+            playerPackages[0].Camera.Initialize();
+            playerPackages[1].Camera.Initialize();
+            //camera1.Initialize();
+            //camera2.Initialize();
 
             base.Initialize();
         }
@@ -197,8 +222,12 @@ namespace PrisonStep
         protected override void LoadContent()
         {
             skybox.LoadContent(Content);
-            player1.LoadContent(Content);
-            player2.LoadContent(Content);
+            foreach (PlayerPackage pp in playerPackages)
+            {
+                pp.Player.LoadContent(Content);
+            }
+            //player1.LoadContent(Content);
+            //player2.LoadContent(Content);
             ground.LoadContent(Content);
 
             smokePlume.LoadContent(Content);
@@ -254,19 +283,31 @@ namespace PrisonStep
                     current = GameState.results;
 
                 //HandleMovement(gameTime, keyboardState, gamePadState1, gamePadState2);
-                player1Interface.Update(gameTime);
-                player2Interface.Update(gameTime);
+                foreach (PlayerPackage pp in playerPackages)
+                {
+                    pp.PlayerInterface.Update(gameTime);
+                }
+                //player1Interface.Update(gameTime);
+                //player2Interface.Update(gameTime);
 
                 skybox.Update(gameTime);
 
-                player1.Update(gameTime);
-                player2.Update(gameTime);
+                foreach (PlayerPackage pp in playerPackages)
+                {
+                    pp.Player.Update(gameTime);
+                }
+                //player1.Update(gameTime);
+                //player2.Update(gameTime);
 
                 ground.Update(gameTime);
 
 
-                camera1.Update(gameTime);
-                camera2.Update(gameTime);
+                foreach (PlayerPackage pp in playerPackages)
+                {
+                    pp.Camera.Update(gameTime);
+                }
+                //camera1.Update(gameTime);
+                //camera2.Update(gameTime);
 
                 //particle systems
                 smokePlume.Update(gameTime.ElapsedGameTime.TotalSeconds);
@@ -299,29 +340,43 @@ namespace PrisonStep
             {
                 graphics.GraphicsDevice.Clear(Color.Black);
 
-                GraphicsDevice.Viewport = camera1.Viewport;
-                lineDraw.Clear();
-                //lineDraw.Camera = camera1;
-                //lineDraw.Crosshair(player1.Location, 200, Color.White);
-                DrawGame(gameTime, camera1);
-                //p1 score
-                spriteBatch.Begin();
-                spriteBatch.DrawString(uIFont, "Score: " + player1.Score.ToString(), new Vector2(10, 10), Color.White);
-                spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
-                spriteBatch.End();
-                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-                GraphicsDevice.Viewport = camera2.Viewport;
+                foreach (PlayerPackage pp in playerPackages)
+                {
+                    GraphicsDevice.Viewport = pp.Camera.Viewport;
+                    //lineDraw.Clear();
+                    //lineDraw.Camera = camera1;
+                    //lineDraw.Crosshair(player1.Location, 200, Color.White);
+                    DrawGame(gameTime, pp.Camera);
+                    //p1 score
+                    spriteBatch.Begin();
+                    spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
+                    spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
+                    spriteBatch.End();
+                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                }
+                //GraphicsDevice.Viewport = camera1.Viewport;
                 //lineDraw.Clear();
-                //lineDraw.Camera = camera2;
-                //lineDraw.Crosshair(player1.Location, 200, Color.White);
-                DrawGame(gameTime, camera2);
-                //p2 score
-                spriteBatch.Begin();
-                spriteBatch.DrawString(uIFont, "Score: " + player2.Score.ToString(), new Vector2(10, 10), Color.White);
-                spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
-                spriteBatch.End();
-                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                ////lineDraw.Camera = camera1;
+                ////lineDraw.Crosshair(player1.Location, 200, Color.White);
+                //DrawGame(gameTime, camera1);
+                ////p1 score
+                //spriteBatch.Begin();
+                //spriteBatch.DrawString(uIFont, "Score: " + player1.Score.ToString(), new Vector2(10, 10), Color.White);
+                //spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
+                //spriteBatch.End();
+                //GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+                //GraphicsDevice.Viewport = camera2.Viewport;
+                ////lineDraw.Clear();
+                ////lineDraw.Camera = camera2;
+                ////lineDraw.Crosshair(player1.Location, 200, Color.White);
+                //DrawGame(gameTime, camera2);
+                ////p2 score
+                //spriteBatch.Begin();
+                //spriteBatch.DrawString(uIFont, "Score: " + player2.Score.ToString(), new Vector2(10, 10), Color.White);
+                //spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
+                //spriteBatch.End();
+                //GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                 
             }
             else if (current == GameState.results)
@@ -340,8 +395,12 @@ namespace PrisonStep
 
             ground.Draw(graphics, gameTime, inCamera);
 
-            player1.Draw(graphics, gameTime, inCamera);
-            player2.Draw(graphics, gameTime, inCamera);
+            foreach (PlayerPackage pp in playerPackages)
+            {
+                pp.Player.Draw(graphics, gameTime, inCamera);
+            }
+            //player1.Draw(graphics, gameTime, inCamera);
+            //player2.Draw(graphics, gameTime, inCamera);
 
             smokePlume.Draw(GraphicsDevice, inCamera);
 
