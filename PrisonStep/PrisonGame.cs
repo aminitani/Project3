@@ -166,12 +166,10 @@ namespace PrisonStep
         /// </summary>
         protected override void Initialize()
         {
-            skybox.Initialize();
-            camera1.Initialize();
-            camera2.Initialize();
             player1.Initialize();
             player2.Initialize();
             ground.Initialize();
+            skybox.Initialize();
 
             //This section is lifted from the learning XNA 4.0 book. Partition the screen into two disjoint halves.
             Viewport vp1 = GraphicsDevice.Viewport;
@@ -186,9 +184,10 @@ namespace PrisonStep
             camera1.Viewport = vp1;
             camera2.Viewport = vp2;
 
-            base.Initialize();
+            camera1.Initialize();
+            camera2.Initialize();
 
-            
+            base.Initialize();
         }
 
         /// <summary>

@@ -124,7 +124,7 @@ namespace PrisonStep
             if (graphics.GraphicsDevice != null)
             {
                 projection = Matrix.CreatePerspectiveFieldOfView(fov,
-                    graphics.GraphicsDevice.Viewport.AspectRatio, znear, zfar);
+                    viewport.AspectRatio, znear, zfar);
             }
         }
 
