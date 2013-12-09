@@ -67,7 +67,7 @@ namespace PrisonStep
         private float horizontalOrientation = (float)Math.PI / 2;
         private float verticalOrientation = 0.0f;
         private float verMaxRot = (float)Math.PI / 4.0f;
-        private float verMinRot = -(float)Math.PI / 4.0f;
+        private float verMinRot = -3.0f * (float)Math.PI / 8.0f;
 
         /// <summary>
         /// The player transformation matrix. Places the player where they need to be.

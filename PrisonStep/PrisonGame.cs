@@ -99,6 +99,10 @@ namespace PrisonStep
         public SpriteBatch SpriteBatch { get { return spriteBatch; } }
         private Texture2D crosshairTexture;
         public Texture2D CrosshairTexture { get { return crosshairTexture; } }
+        private Texture2D elementsPlusTexture;
+        public Texture2D ElementsPlusTexture { get { return elementsPlusTexture; } }
+        private Texture2D ringTexture;
+        public Texture2D RingTexture { get { return ringTexture; } }
 
         private Skybox skybox;
 
@@ -240,6 +244,8 @@ namespace PrisonStep
             spriteBatch = new SpriteBatch(GraphicsDevice);
             uIFont = Content.Load<SpriteFont>("UIFont");
             crosshairTexture = Content.Load<Texture2D>("crosshair");
+            elementsPlusTexture = Content.Load<Texture2D>("ElementSelectPlus");
+            ringTexture = Content.Load<Texture2D>("ring");
         }
 
         /// <summary>
@@ -349,6 +355,13 @@ namespace PrisonStep
                     spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
                     spriteBatch.DrawString(uIFont, "Health: " + pp.Player.Health.ToString(), new Vector2(10, 20), Color.White);
                     spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
+                    spriteBatch.Draw(elementsPlusTexture, new Vector2(10, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height), Color.White);
+                    if(pp.Player.ColorState == Player.Colors.Blue)
+                        spriteBatch.Draw(ringTexture, new Vector2(10 + 46, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 3), Color.White);
+                    else if(pp.Player.ColorState == Player.Colors.Red)
+                        spriteBatch.Draw(ringTexture, new Vector2(10 + 3, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 46), Color.White);
+                    else //if (pp.Player.ColorState == Player.Colors.Green)
+                        spriteBatch.Draw(ringTexture, new Vector2(10 + elementsPlusTexture.Width - 3 - ringTexture.Width, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 46), Color.White);
                     spriteBatch.End();
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                 }
