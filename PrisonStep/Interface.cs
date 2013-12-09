@@ -41,6 +41,10 @@ namespace PrisonStep
         /// </summary>
         GamePadState lastGamepadState;
 
+        private bool allowKeyboard;
+
+        public bool AllowKeyboard { get { return allowKeyboard; } set { allowKeyboard = value; } }
+
 
         public Interface(PrisonGame game, Player player, PlayerIndex playerControllerIndex)
         {
@@ -143,6 +147,47 @@ namespace PrisonStep
             }
                 
 
+
+            if (allowKeyboard)
+            {
+                KeyboardState keyboardState = Keyboard.GetState();
+                if (keyboardState.IsKeyDown(Keys.W))
+                {
+                    player.AttempMovement(0, 1,deltaTime);
+                }
+                if (keyboardState.IsKeyDown(Keys.S))
+                {
+                    player.AttempMovement(0, -1, deltaTime);
+                }
+                if (keyboardState.IsKeyDown(Keys.A))
+                {
+                    player.AttempMovement(-1, 0, deltaTime);
+                }
+                if (keyboardState.IsKeyDown(Keys.D))
+                {
+                    player.AttempMovement(1, 0, deltaTime);
+                }
+                if (keyboardState.IsKeyDown(Keys.Up))
+                {
+                    player.AttemptRotation(0, .5f,deltaTime);
+                }
+                if (keyboardState.IsKeyDown(Keys.Down))
+                {
+                    player.AttemptRotation(0, -.5f, deltaTime);
+                }
+                if (keyboardState.IsKeyDown(Keys.Left))
+                {
+                    player.AttemptRotation(-.5f, 0, deltaTime);
+                }
+                if (keyboardState.IsKeyDown(Keys.Right))
+                {
+                    player.AttemptRotation(.5f, 0, deltaTime);
+                }
+                if (keyboardState.IsKeyDown(Keys.Space))
+                {
+                    player.AttemptShoot();
+                }
+            };
             lastGamepadState = GamePad.GetState(index);
         }
 

@@ -118,9 +118,15 @@ namespace PrisonStep
                 //FIX ME
                 Interface templayerInterface = null;
                 if (i == 0)
+                {
                     templayerInterface = new Interface(this, templayer, PlayerIndex.One);
+                    /*add keyboard support for the first player*/
+                    templayerInterface.AllowKeyboard = true;
+                }
                 else if (i == 1)
+                {
                     templayerInterface = new Interface(this, templayer, PlayerIndex.Two);
+                }
 
                 templayerPackage.PlayerInterface = templayerInterface;
 
