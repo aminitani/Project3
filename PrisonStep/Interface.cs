@@ -119,6 +119,7 @@ namespace PrisonStep
             {
                 //no type to pass
                 //Call a function from the player to jump
+                player.AttemptJump();
             }
 
             if (GamePad.GetState(index).Buttons.B == ButtonState.Pressed

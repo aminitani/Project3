@@ -36,6 +36,13 @@ namespace PrisonStep
         private Vector3 location = new Vector3(0, 0, 0);
         public Vector3 Location { get { return location; } set { location = value; } }
 
+        private Vector3 momentum = Vector3.Zero;
+        //update calculates this only for the sake of momentum
+        private Vector3 velocity = Vector3.Zero;
+        private Vector3 lastPosition = Vector3.Zero;
+        //this one holds the vertical velocity while jumping
+        private float verticalocity = 0.0f;
+
         private int headex;
         private int arm2Index;
         private int eyendex;
@@ -68,8 +75,8 @@ namespace PrisonStep
         private Matrix transform;
         public Matrix Transform { get { return transform; } }
 
-        private enum States { Start }
-        private States state = States.Start;
+        private enum States { Normal, Jumped, Died }
+        private States state = States.Normal;
 
         /// <summary>
         /// Our animated model
@@ -117,6 +124,7 @@ namespace PrisonStep
 
         public void Initialize()
         {
+            lastPosition = location;
         }
 
         /// <summary>
@@ -154,6 +162,33 @@ namespace PrisonStep
         {
             double deltaTotal = gameTime.ElapsedGameTime.TotalSeconds;
 
+            velocity = (location - lastPosition) / (float)deltaTotal;
+            velocity.Y = 0;
+
+            switch (state)
+            {
+                case States.Normal:
+                    break;
+
+                case States.Jumped:
+                    Vector3 newlocation = location + momentum * (float)deltaTotal;
+                    if ((newlocation - Vector3.Zero).Length() < 7000.0f)
+                        location = newlocation;
+
+                    location += new Vector3(0, verticalocity * (float)deltaTotal, 0);
+                    if (location.Y <= 0)
+                    {
+                        location.Y = 0;
+                        state = States.Normal;
+                    }
+                    else
+                        verticalocity -= 981 * (float)deltaTotal;
+                    break;
+
+                case States.Died:
+                    break;
+            }
+
             laserFire.Update(gameTime);
 
             if (laserDelay < 0.0f)
@@ -174,11 +209,6 @@ namespace PrisonStep
                 exterminateDelay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
-            float strafe = 0;
-            float newOrientation = horizontalOrientation;
-            float deltaAngle = 0;
-            float turnRate = 0;
-
             do
             {
                 double delta = deltaTotal;
@@ -188,36 +218,6 @@ namespace PrisonStep
                 dalek.BoneTransforms[eyendex] = Matrix.CreateRotationX(verticalOrientation) * dalek.BindTransforms[eyendex];
                 dalek.BoneTransforms[arm2Index] = Matrix.CreateRotationX(verticalOrientation) * dalek.BindTransforms[arm2Index];
                 dalek.ComputeAbsoluteTransforms();
-
-                //
-                // Part 1:  Compute a new orientation
-                //
-
-                //Matrix deltaMatrix = dalek.DeltaMatrix;
-                //deltaAngle = (float)Math.Atan2(deltaMatrix.Backward.X, deltaMatrix.Backward.Z);
-                //newOrientation = horizontalOrientation + deltaAngle;
-
-                //
-                // Part 2:  Compute a new location
-                //
-
-                // We are likely rotated from the angle the model expects to be in
-                // Determine that angle.
-                //Matrix rootMatrix = dalek.RootMatrix;
-                //float actualAngle = (float)Math.Atan2(rootMatrix.Backward.X, rootMatrix.Backward.Z);
-                //Vector3 newLocation = location + Vector3.TransformNormal(dalek.DeltaPosition + new Vector3(strafe, 0, 0),
-                //               Matrix.CreateRotationY(newOrientation - actualAngle));
-
-                //
-                // Update the orientation
-                //
-
-                //horizontalOrientation = newOrientation;
-
-                //
-                // Update the location
-                //
-
 
                 bool collision = false;     // Until we know otherwise
 
@@ -280,12 +280,18 @@ namespace PrisonStep
             //do other keyboard based actions
 
             playerCollision.Update(gameTime, location);
+
+            lastPosition = location;
         }
 
 
         public void AttempMovement(float horizontal, float vertical, double deltaTime)
         {
-            Vector3 newlocation = location + (vertical * FacingWithoutY() + horizontal * Right()) * moveSpeed * (float)deltaTime;
+            Vector3 newlocation;
+            if(state == States.Jumped)
+                newlocation = location + (vertical * FacingWithoutY() + horizontal * Right()) * moveSpeed/3 * (float)deltaTime;
+            else
+                newlocation = location + (vertical * FacingWithoutY() + horizontal * Right()) * moveSpeed * (float)deltaTime;
             if( (newlocation - Vector3.Zero).Length() < 7000.0f)
                 location = newlocation;
         }
@@ -314,6 +320,16 @@ namespace PrisonStep
 
             //only fire one per quarter second
             laserDelay = 0.25f;
+        }
+
+        public void AttemptJump()
+        {
+            if (state != States.Normal)
+                return;
+
+            momentum = velocity;
+            verticalocity = 500.0f;
+            state = States.Jumped;
         }
 
         public void AttempToYellExterminate()
