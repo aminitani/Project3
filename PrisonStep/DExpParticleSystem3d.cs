@@ -12,9 +12,9 @@ namespace PrisonStep
     /// SmokePlumeParticleSystem is a specialization of ParticleSystem which sends up a
     /// plume of smoke. The smoke is blown to the right by the wind.
     /// </summary>
-    public class RedParticleSystem3d : ParticleSystem3d
+    public class DExpParticleSystem3d : ParticleSystem3d
     {
-        public RedParticleSystem3d(int howManyEffects)
+        public DExpParticleSystem3d(int howManyEffects)
             : base(howManyEffects)
         {
         }
@@ -26,7 +26,7 @@ namespace PrisonStep
         /// </summary>
         protected override void InitializeConstants()
         {
-            textureFilename = "redParticle";
+            textureFilename = "explosionParticle";
 
             minInitialSpeed = 2;
             maxInitialSpeed = 10;
@@ -38,18 +38,18 @@ namespace PrisonStep
 
             // long lifetime, this can be changed to create thinner or thicker smoke.
             // tweak minNumParticles and maxNumParticles to complement the effect.
-            minLifetime = 0.1f;
-            maxLifetime = 0.5f;
+            minLifetime = 1.0f;
+            maxLifetime = 2.0f;
 
             minScale = 1.0f;
             maxScale = 5.0f;
 
-            minNumParticles = 4;
-            maxNumParticles = 8;
+            minNumParticles = 400;
+            maxNumParticles = 500;
 
             // rotate
-            minRotationSpeed = -MathHelper.PiOver4;
-            maxRotationSpeed = MathHelper.PiOver4;
+            minRotationSpeed = -MathHelper.PiOver2;
+            maxRotationSpeed = MathHelper.PiOver2;
         }
 
         /// <summary>

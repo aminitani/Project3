@@ -396,6 +396,7 @@ namespace PrisonStep
         private void Die()
         {
             deaths += 1;
+            game.DalekExpParticleSystem.AddParticles(Location + new Vector3(0, 100, 0));
         }
 
         public void IncrementHealth(int healthInc)

@@ -75,6 +75,9 @@ namespace PrisonStep
         private GreenParticleSystem3d greenParticleSystem;
         public GreenParticleSystem3d GreenParticleSystem { get { return greenParticleSystem; } }
 
+        private DExpParticleSystem3d dalekExpParticleSystem;
+        public DExpParticleSystem3d DalekExpParticleSystem { get { return dalekExpParticleSystem; } }
+
         private Fluid fluid;
         public Fluid Fluid { get { return fluid;} }
 
@@ -161,6 +164,9 @@ namespace PrisonStep
             greenParticleSystem = new GreenParticleSystem3d(8);
             greenParticleSystem.Blended = false;
 
+            dalekExpParticleSystem = new DExpParticleSystem3d(5);
+            dalekExpParticleSystem.Blended = false;
+
             fluid = new Fluid(this);
 
             // Some basic setup for the display window
@@ -233,6 +239,7 @@ namespace PrisonStep
             redParticleSystem.LoadContent(Content);
             blueParticleSystem.LoadContent(Content);
             greenParticleSystem.LoadContent(Content);
+            dalekExpParticleSystem.LoadContent(Content);
 
             fluid.LoadContent(Content);
 
@@ -289,6 +296,7 @@ namespace PrisonStep
                 foreach (PlayerPackage pp in playerPackages)
                 {
                     pp.PlayerInterface.Update(gameTime);
+                    fluid.Disturb(pp.Player.Location);
                 }
 
                 skybox.Update(gameTime);
@@ -309,6 +317,7 @@ namespace PrisonStep
                 redParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
                 blueParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
                 greenParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
+                dalekExpParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
 
                 fluid.Update(gameTime);
             }
@@ -347,7 +356,7 @@ namespace PrisonStep
 
                     spriteBatch.Begin();
                     spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
-                    spriteBatch.DrawString(uIFont, "Health: " + pp.Player.Health.ToString(), new Vector2(10, 20), Color.White);
+                    spriteBatch.DrawString(uIFont, "Health: " + pp.Player.Health.ToString(), new Vector2(10, 30), Color.White);
                     spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
                     spriteBatch.End();
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -355,10 +364,17 @@ namespace PrisonStep
             }
             else if (current == GameState.results)
             {
-                spriteBatch.Begin();
-                spriteBatch.DrawString(uIFont, "You are dead and all your friends are dead.", new Vector2(10, 10), Color.White);
-                spriteBatch.End();
-                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                foreach (PlayerPackage pp in playerPackages)
+                {
+                    GraphicsDevice.Viewport = pp.Camera.Viewport;
+
+                    spriteBatch.Begin();
+                    spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
+                    spriteBatch.DrawString(uIFont, "Kills: " + pp.Player.Kills.ToString(), new Vector2(10, 30), Color.White);
+                    spriteBatch.DrawString(uIFont, "Deaths: " + pp.Player.Deaths.ToString(), new Vector2(10, 50), Color.White);
+                    spriteBatch.End();
+                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                }
             }
         }
 
@@ -379,6 +395,7 @@ namespace PrisonStep
             redParticleSystem.Draw(GraphicsDevice, inCamera);
             blueParticleSystem.Draw(GraphicsDevice, inCamera);
             greenParticleSystem.Draw(GraphicsDevice, inCamera);
+            dalekExpParticleSystem.Draw(GraphicsDevice, inCamera);
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.BlendState = BlendState.Opaque;
