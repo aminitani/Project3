@@ -26,14 +26,6 @@ namespace PrisonStep
         GraphicsDeviceManager graphics;
 
         /// <summary>
-        /// The camera we use
-        /// </summary>
-        //private Camera camera1;
-
-        //private Camera camera2;
-
-
-        /// <summary>
         /// Splash screen states
         /// </summary>
         public enum GameState { splash, game, results };
@@ -54,22 +46,6 @@ namespace PrisonStep
 
         private List<PlayerPackage> playerPackages = new List<PlayerPackage>();
 
-        //private List<Player> players;
-        //private List<Camera> cameras;
-        //private List<Interface> interfaces;
-        //private List<Vector3> spawns;
-
-        //private Player player1;
-        //private Interface player1Interface;
-        //private Vector3 player1Spawn = new Vector3(200, 0, 0);
-        //public Player Player { get { return player1; } }
-
-        //private Player player2;
-        //private Interface player2Interface;
-        //private Vector3 player2Spawn = new Vector3(0, 0, 200);
-        //public Player Player2 { get { return player2; } }
-
-
         //Particle effects
         private RedParticleSystem3d redParticleSystem;
         public RedParticleSystem3d RedParticleSystem { get { return redParticleSystem; } }
@@ -85,13 +61,6 @@ namespace PrisonStep
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// The game camera
-        /// </summary>
-        //public Camera Camera { get { return camera1; } }
-
-        //public Camera Camera2 { get { return camera2; } }
 
         public PSLineDraw LineDraw { get { return lineDraw; } }
 
@@ -158,31 +127,22 @@ namespace PrisonStep
 
             ground = new Ground(this);
 
-            // Create a player object
-            //player1 = new Player(this, camera1);
-            //player1.Location = player1Spawn;
-            //player1Interface = new Interface(this, player1, PlayerIndex.One);
-            //player2 = new Player(this, camera2);
-            //player2.Location = player2Spawn;
-            //player2Interface = new Interface(this, player2, PlayerIndex.Two);
-
             //Particle system
-            redParticleSystem = new RedParticleSystem3d(1);
+            redParticleSystem = new RedParticleSystem3d(8);
             redParticleSystem.Blended = false;
 
-            blueParticleSystem = new BlueParticleSystem3d(1);
+            blueParticleSystem = new BlueParticleSystem3d(8);
             blueParticleSystem.Blended = false;
 
-            greenParticleSystem = new GreenParticleSystem3d(1);
+            greenParticleSystem = new GreenParticleSystem3d(8);
             greenParticleSystem.Blended = false;
 
             // Some basic setup for the display window
             this.IsMouseVisible = true;
-			//this.Window.AllowUserResizing = true;
+			this.Window.AllowUserResizing = false;
 			this.graphics.PreferredBackBufferWidth = 1024;
 			this.graphics.PreferredBackBufferHeight = 768;
 
-            //lineDraw = new PSLineDraw(this, Camera);
             this.Components.Add(lineDraw);
         }
 
@@ -198,8 +158,6 @@ namespace PrisonStep
             {
                 pp.Player.Initialize();
             }
-            //player1.Initialize();
-            //player2.Initialize();
             ground.Initialize();
             skybox.Initialize();
 
@@ -216,13 +174,11 @@ namespace PrisonStep
             //FIX ME
             playerPackages[0].Camera.Viewport = vp1;
             playerPackages[1].Camera.Viewport = vp2;
-            //camera1.Viewport = vp1;
-            //camera2.Viewport = vp2;
 
-            playerPackages[0].Camera.Initialize();
-            playerPackages[1].Camera.Initialize();
-            //camera1.Initialize();
-            //camera2.Initialize();
+            foreach (PlayerPackage pp in playerPackages)
+            {
+                pp.Camera.Initialize();
+            }
 
             base.Initialize();
         }
@@ -238,8 +194,6 @@ namespace PrisonStep
             {
                 pp.Player.LoadContent(Content);
             }
-            //player1.LoadContent(Content);
-            //player2.LoadContent(Content);
             ground.LoadContent(Content);
 
             //Particle system contents
@@ -250,9 +204,6 @@ namespace PrisonStep
             spriteBatch = new SpriteBatch(GraphicsDevice);
             uIFont = Content.Load<SpriteFont>("UIFont");
             crosshairTexture = Content.Load<Texture2D>("crosshair");
-
-            //bazooka.ObjectEffect = Content.Load<Effect>("PhibesEffect1");
-            //bazooka.SetEffect();
         }
 
         /// <summary>
@@ -297,13 +248,10 @@ namespace PrisonStep
                 if (keyboardState.IsKeyDown(Keys.Tab) && lastKeyboardState.IsKeyUp(Keys.Tab))
                     current = GameState.results;
 
-                //HandleMovement(gameTime, keyboardState, gamePadState1, gamePadState2);
                 foreach (PlayerPackage pp in playerPackages)
                 {
                     pp.PlayerInterface.Update(gameTime);
                 }
-                //player1Interface.Update(gameTime);
-                //player2Interface.Update(gameTime);
 
                 skybox.Update(gameTime);
 
@@ -311,24 +259,13 @@ namespace PrisonStep
                 {
                     pp.Player.Update(gameTime);
                 }
-                //player1.Update(gameTime);
-                //player2.Update(gameTime);
 
                 ground.Update(gameTime);
-
-                /*particle system test*/
-                greenParticleSystem.AddParticles(player1.Location + new Vector3(0, 100, 0));
-                redParticleSystem.AddParticles(player1.Location + new Vector3(0, 100, 0));
-                blueParticleSystem.AddParticles(player1.Location + new Vector3(0, 100, 0));
-                /*************/
-
 
                 foreach (PlayerPackage pp in playerPackages)
                 {
                     pp.Camera.Update(gameTime);
                 }
-                //camera1.Update(gameTime);
-                //camera2.Update(gameTime);
 
                 //particle systems
                 redParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
@@ -373,34 +310,11 @@ namespace PrisonStep
                     //p1 score
                     spriteBatch.Begin();
                     spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
+                    spriteBatch.DrawString(uIFont, "Health: " + pp.Player.Health.ToString(), new Vector2(10, 20), Color.White);
                     spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
                     spriteBatch.End();
                     GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                 }
-                //GraphicsDevice.Viewport = camera1.Viewport;
-                //lineDraw.Clear();
-                ////lineDraw.Camera = camera1;
-                ////lineDraw.Crosshair(player1.Location, 200, Color.White);
-                //DrawGame(gameTime, camera1);
-                ////p1 score
-                //spriteBatch.Begin();
-                //spriteBatch.DrawString(uIFont, "Score: " + player1.Score.ToString(), new Vector2(10, 10), Color.White);
-                //spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
-                //spriteBatch.End();
-                //GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-                //GraphicsDevice.Viewport = camera2.Viewport;
-                ////lineDraw.Clear();
-                ////lineDraw.Camera = camera2;
-                ////lineDraw.Crosshair(player1.Location, 200, Color.White);
-                //DrawGame(gameTime, camera2);
-                ////p2 score
-                //spriteBatch.Begin();
-                //spriteBatch.DrawString(uIFont, "Score: " + player2.Score.ToString(), new Vector2(10, 10), Color.White);
-                //spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
-                //spriteBatch.End();
-                //GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-                
             }
             else if (current == GameState.results)
             {

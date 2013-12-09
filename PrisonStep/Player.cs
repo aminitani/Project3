@@ -16,6 +16,8 @@ namespace PrisonStep
     {
         #region Fields
 
+        const int MAXHEALTH = 100;
+
         private float exterminateDelay = 0.0f;
 
         private float moveSpeed = 1000.0f;
@@ -44,6 +46,11 @@ namespace PrisonStep
         private float armRot = 0.0f;
         private float headRot = 0.0f;
 
+        public enum Colors { Red, Green, Blue }
+
+        private Colors colorState = Colors.Red;
+        public Colors ColorState { get { return colorState; } }
+
         /// <summary>
         /// The player orientation as a simple angle
         /// </summary>
@@ -58,7 +65,7 @@ namespace PrisonStep
         private Matrix transform;
         public Matrix Transform { get { return transform; } }
 
-        private enum States {Start}
+        private enum States {Start, Dead}
         private States state = States.Start;
 
         /// <summary>
@@ -77,6 +84,9 @@ namespace PrisonStep
         private LaserFire laserFire;
 
         private float laserDelay = 0.0f;
+
+        private int health = MAXHEALTH;
+        public int Health { get { return health; } }
 
         /// <summary>
         /// The collision cylinder for the player
@@ -332,6 +342,24 @@ namespace PrisonStep
             return ret;
         }
 
+        public void ChangeColor(Player.Colors inColor)
+        {
+            colorState = inColor;
+            laserFire.ColorState = inColor;
+        }
 
+        public void IncrementHealth(int healthInc)
+        {
+            health += healthInc;
+            if (health <= 0)
+            {
+                health = 0;
+                state = States.Dead;
+            }
+            else if (health >= 100)
+            {
+                health = 100;
+            }
+        }
     }
 }

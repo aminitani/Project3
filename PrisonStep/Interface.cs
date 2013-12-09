@@ -103,25 +103,28 @@ namespace PrisonStep
                     deltaTime);
             }
 
-            if (GamePad.GetState(index).DPad.Left != ButtonState.Pressed
+            if (GamePad.GetState(index).DPad.Left == ButtonState.Pressed
                 && lastGamepadState.DPad.Left != ButtonState.Pressed)
             {
                 //no type to pass
                 //Call a function from the player to make them switch to element 1
+                player.ChangeColor(Player.Colors.Red);
             }
 
-            if (GamePad.GetState(index).DPad.Up != ButtonState.Pressed
+            if (GamePad.GetState(index).DPad.Up == ButtonState.Pressed
                 && lastGamepadState.DPad.Up != ButtonState.Pressed)
             {
                 //no type to pass
                 //Call a function from the player to make them switch to element 2
+                player.ChangeColor(Player.Colors.Blue);
             }
 
-            if (GamePad.GetState(index).DPad.Right != ButtonState.Pressed
+            if (GamePad.GetState(index).DPad.Right == ButtonState.Pressed
                 && lastGamepadState.DPad.Right != ButtonState.Pressed)
             {
                 //no type to pass
                 //Call a function from the player to make them switch to element 3
+                player.ChangeColor(Player.Colors.Green);
             }
 
             if (GamePad.GetState(index).Buttons.A == ButtonState.Pressed

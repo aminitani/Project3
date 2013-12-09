@@ -19,6 +19,7 @@ namespace PrisonStep
         {
         }
 
+        private int accelRate = 350;
         /// <summary>
         /// Set up the constants that will give this particle system its behavior and
         /// properties.
@@ -37,14 +38,14 @@ namespace PrisonStep
 
             // long lifetime, this can be changed to create thinner or thicker smoke.
             // tweak minNumParticles and maxNumParticles to complement the effect.
-            minLifetime = 1.0f;
-            maxLifetime = 2.0f;
+            minLifetime = 0.1f;
+            maxLifetime = 0.3f;
 
             minScale = 1.0f;
             maxScale = 5.0f;
 
-            minNumParticles = 50;
-            maxNumParticles = 150;
+            minNumParticles = 4;
+            maxNumParticles = 8;
 
             // rotate
             minRotationSpeed = -MathHelper.PiOver4;
@@ -77,7 +78,7 @@ namespace PrisonStep
 
             // the base is mostly good, but we want to simulate a little bit of wind
             // heading to the right.
-            p.Acceleration = p.Acceleration + new Vector3(ParticleSystem3d.RandomBetween(-100, 100), ParticleSystem3d.RandomBetween(-100, 100), ParticleSystem3d.RandomBetween(-100, 100));
+            p.Acceleration = p.Acceleration + new Vector3(ParticleSystem3d.RandomBetween(-accelRate, accelRate), ParticleSystem3d.RandomBetween(-accelRate, accelRate), ParticleSystem3d.RandomBetween(-accelRate, accelRate));
         }
     }
 }
