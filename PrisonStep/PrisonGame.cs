@@ -296,7 +296,10 @@ namespace PrisonStep
                 foreach (PlayerPackage pp in playerPackages)
                 {
                     pp.PlayerInterface.Update(gameTime);
-                    fluid.Disturb(pp.Player.Location);
+                    if (pp.Player.Location.Y >= 0)
+                    {
+                        fluid.Disturb(pp.Player.Location);
+                    }
                 }
 
                 skybox.Update(gameTime);
@@ -351,15 +354,29 @@ namespace PrisonStep
 
                 foreach (PlayerPackage pp in playerPackages)
                 {
-                    GraphicsDevice.Viewport = pp.Camera.Viewport;
-                    DrawGame(gameTime, pp.Camera);
+                    if (pp.Player.State != Player.States.Died)
+                    {
+                        GraphicsDevice.Viewport = pp.Camera.Viewport;
+                        DrawGame(gameTime, pp.Camera);
 
-                    spriteBatch.Begin();
-                    spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
-                    spriteBatch.DrawString(uIFont, "Health: " + pp.Player.Health.ToString(), new Vector2(10, 30), Color.White);
-                    spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
-                    spriteBatch.End();
-                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                        spriteBatch.Begin();
+                        spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
+                        spriteBatch.DrawString(uIFont, "Health: " + pp.Player.Health.ToString(), new Vector2(10, 30), Color.White);
+                        spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
+                        spriteBatch.End();
+                        GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    }
+                    else
+                    {
+                        GraphicsDevice.Viewport = pp.Camera.Viewport;
+                        DrawGame(gameTime, pp.Camera);
+
+                        spriteBatch.Begin();
+                        spriteBatch.DrawString(uIFont, "Respawn in: " + pp.Player.DeathTimer.ToString(), new Vector2(230, 184), Color.White);
+                        //spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
+                        spriteBatch.End();
+                        GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    }
                 }
             }
             else if (current == GameState.results)

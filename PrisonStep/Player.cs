@@ -75,8 +75,9 @@ namespace PrisonStep
         private Matrix transform;
         public Matrix Transform { get { return transform; } }
 
-        private enum States { Normal, Jumped, Died }
+        public enum States { Normal, Jumped, Died }
         private States state = States.Normal;
+        public States State { get { return state; } }
 
         /// <summary>
         /// Our animated model
@@ -107,7 +108,16 @@ namespace PrisonStep
         private BoundingCylinder playerCollision;
         public BoundingCylinder PlayerCollision { get { return playerCollision; } }
 
+        /// <summary>
+        /// Counts down to when the player respawns
+        /// </summary>
+        private float deathTimer = 5.0f;
+        public float DeathTimer { get { return deathTimer; } }
 
+        /// <summary>
+        /// Generates a random number for respawning in a random location
+        /// </summary>
+        private static Random random = new Random();
 
         #endregion
 
@@ -190,6 +200,11 @@ namespace PrisonStep
                     break;
 
                 case States.Died:
+                    deathTimer -= (float)deltaTotal;
+                    if (deathTimer <= 0.0f)
+                    {
+                        Respawn();
+                    }
                     break;
             }
 
@@ -250,10 +265,20 @@ namespace PrisonStep
                 //camera.Center = location + new Vector3(0, 100, 0);
                 //Vector3 newCameraLocation = location + new Vector3(300, 100, 0);
                 //camera.Eye = newCameraLocation;
-                camera.Center = location + new Vector3(0, 90, 0) + 1000 * Facing();
-                Vector3 newCameraLocation = location + new Vector3(0, 120, 0) +
-                    -70.0f * Right() - 200.0f * Facing();
-                camera.Eye = newCameraLocation;
+                if (state != States.Died)
+                {
+                    camera.Center = location + new Vector3(0, 90, 0) + 1000 * Facing();
+                    Vector3 newCameraLocation = location + new Vector3(0, 120, 0) +
+                        -70.0f * Right() - 200.0f * Facing();
+                    camera.Eye = newCameraLocation;
+                }
+                else
+                {
+                    camera.Center = new Vector3(0, 0, 0);//location + new Vector3(0, 90, 0) + 1000 * Facing();
+                    Vector3 newCameraLocation = new Vector3(0, 100, 0);//location + new Vector3(0, 120, 0) +
+                        //-70.0f * Right() - 200.0f * Facing();
+                    camera.Eye = newCameraLocation;
+                }
 
                 //string regionCamera = TestRegion(newCameraLocation);
 
@@ -397,6 +422,18 @@ namespace PrisonStep
         {
             deaths += 1;
             game.DalekExpParticleSystem.AddParticles(Location + new Vector3(0, 100, 0));
+            location = new Vector3(200, -200, 0);
+            state = States.Died;
+        }
+
+        private void Respawn()
+        {
+            deathTimer = 5.0f;
+            float randX = -3000.0f + (float)random.NextDouble() * (3000.0f - -3000.0f);
+            float randZ = -3000.0f + (float)random.NextDouble() * (3000.0f - -3000.0f);
+            health = 100;
+            state = States.Normal;
+            location = new Vector3(randX, 0, randZ);
         }
 
         public void IncrementHealth(int healthInc)
