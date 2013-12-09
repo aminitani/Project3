@@ -241,6 +241,11 @@
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="VertexLights.fx">
+      <Name>VertexLights</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
     <None Include="Lights.fx">
       <Name>Lights</Name>
       <Importer>EffectImporter</Importer>

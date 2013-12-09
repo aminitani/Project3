@@ -134,12 +134,14 @@ namespace PrisonStep
                 //Call a function from the player to yell "Exterminate!"
             }
 
-            if (GamePad.GetState(index).Buttons.B != ButtonState.Pressed
+            if (GamePad.GetState(index).Buttons.B == ButtonState.Pressed
                 && lastGamepadState.Buttons.B != ButtonState.Pressed)
             {
+                game.Fluid.Disturb(new Vector3(50, 0, 50));
                 //no type to pass
                 //Call a function from the player to make them cast thier selected element
             }
+                
 
             lastGamepadState = GamePad.GetState(index);
         }

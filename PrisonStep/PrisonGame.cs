@@ -24,7 +24,7 @@ namespace PrisonStep
         /// This graphics device we are drawing on in this assignment
         /// </summary>
         GraphicsDeviceManager graphics;
-
+        private Fluid fluid;
         /// <summary>
         /// Splash screen states
         /// </summary>
@@ -55,6 +55,8 @@ namespace PrisonStep
 
         private GreenParticleSystem3d greenParticleSystem;
         public GreenParticleSystem3d GreenParticleSystem { get { return greenParticleSystem; } }
+        
+        public Fluid Fluid { get { return fluid;} }
 
         private PSLineDraw lineDraw;
 
@@ -107,7 +109,7 @@ namespace PrisonStep
                 tempCam.FieldOfView = MathHelper.ToRadians(42);
                 templayerPackage.Camera = tempCam;
 
-                templayerPackage.Spawn = new Vector3(0, 0, 0);
+                templayerPackage.Spawn = new Vector3(1000, 0, 0);
 
                 Player templayer = new Player(this, tempCam);
                 templayer.Location = templayerPackage.Spawn;
@@ -137,6 +139,9 @@ namespace PrisonStep
             greenParticleSystem = new GreenParticleSystem3d(8);
             greenParticleSystem.Blended = false;
 
+            fluid = new Fluid(this);
+            fluid.SetConstants(5.2f, 1, 0.016f, 1);
+
             // Some basic setup for the display window
             this.IsMouseVisible = true;
 			this.Window.AllowUserResizing = false;
@@ -160,6 +165,8 @@ namespace PrisonStep
             }
             ground.Initialize();
             skybox.Initialize();
+            fluid.Initialize();
+            
 
             //This section is lifted from the learning XNA 4.0 book. Partition the screen into two disjoint halves.
             Viewport vp1 = GraphicsDevice.Viewport;
@@ -200,6 +207,9 @@ namespace PrisonStep
             redParticleSystem.LoadContent(Content);
             blueParticleSystem.LoadContent(Content);
             greenParticleSystem.LoadContent(Content);
+
+            fluid.LoadContent(Content);
+
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
             uIFont = Content.Load<SpriteFont>("UIFont");
@@ -271,6 +281,8 @@ namespace PrisonStep
                 redParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
                 blueParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
                 greenParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
+
+                fluid.Update(gameTime);
             }
             else if (current == GameState.results)
             {
@@ -346,6 +358,8 @@ namespace PrisonStep
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.BlendState = BlendState.Opaque;
+
+            fluid.Draw(graphics.GraphicsDevice, inCamera);
 
             base.Draw(gameTime);
 
