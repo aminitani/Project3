@@ -44,6 +44,8 @@ namespace PrisonStep
         private Ground ground;
         public Ground Ground { get { return ground; } }
 
+        private Model wall;
+
         private List<PlayerPackage> playerPackages = new List<PlayerPackage>();
         public List<PlayerPackage> PlayerPackages { get { return playerPackages; } }
 
@@ -204,6 +206,9 @@ namespace PrisonStep
         protected override void LoadContent()
         {
             skybox.LoadContent(Content);
+
+            wall = Content.Load<Model>("Walls");
+
             foreach (PlayerPackage pp in playerPackages)
             {
                 pp.Player.LoadContent(Content);
@@ -322,11 +327,8 @@ namespace PrisonStep
                 foreach (PlayerPackage pp in playerPackages)
                 {
                     GraphicsDevice.Viewport = pp.Camera.Viewport;
-                    //lineDraw.Clear();
-                    //lineDraw.Camera = camera1;
-                    //lineDraw.Crosshair(player1.Location, 200, Color.White);
                     DrawGame(gameTime, pp.Camera);
-                    //p1 score
+
                     spriteBatch.Begin();
                     spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
                     spriteBatch.DrawString(uIFont, "Health: " + pp.Player.Health.ToString(), new Vector2(10, 20), Color.White);
@@ -350,14 +352,13 @@ namespace PrisonStep
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             skybox.Draw(graphics, gameTime, inCamera);
+            DrawModel(graphics, wall, Matrix.Identity, inCamera);
             ground.Draw(graphics, gameTime, inCamera);
 
             foreach (PlayerPackage pp in playerPackages)
             {
                 pp.Player.Draw(graphics, gameTime, inCamera);
             }
-            //player1.Draw(graphics, gameTime, inCamera);
-            //player2.Draw(graphics, gameTime, inCamera);
 
             redParticleSystem.Draw(GraphicsDevice, inCamera);
             blueParticleSystem.Draw(GraphicsDevice, inCamera);
@@ -372,7 +373,7 @@ namespace PrisonStep
 
         }
 
-        /*public void DrawModel(GraphicsDeviceManager graphics, Model model, Matrix world, Camera inCamera)
+        public void DrawModel(GraphicsDeviceManager graphics, Model model, Matrix world, Camera inCamera)
         {
             Matrix[] transforms = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(transforms);
@@ -388,6 +389,8 @@ namespace PrisonStep
                 }
                 mesh.Draw();
             }
-        }*/
+        }
+
+
     }
 }
