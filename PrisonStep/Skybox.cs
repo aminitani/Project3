@@ -13,7 +13,7 @@ namespace PrisonStep
          /// <summary>
         /// Current position
         /// </summary>
-        private Vector3 position = Vector3.Zero;
+        private Vector3 position = new Vector3(0, 500, 0);
         private PrisonGame game;
         private Model model;
 
@@ -32,7 +32,7 @@ namespace PrisonStep
 
         public void Draw(GraphicsDeviceManager graphics, GameTime gameTime, Camera inCamera)
         {
-            DrawModel(graphics, model, Matrix.CreateTranslation(position) * Matrix.CreateScale(7, 7, 7), gameTime, inCamera);
+            DrawModel(graphics, model, Matrix.CreateTranslation(position) * Matrix.CreateRotationY((float)Math.PI/2) * Matrix.CreateScale(10, 10, 10), gameTime, inCamera);
         }
 
         private void DrawModel(GraphicsDeviceManager graphics, Model model, Matrix world, GameTime gameTime, Camera inCamera)

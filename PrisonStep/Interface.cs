@@ -51,23 +51,6 @@ namespace PrisonStep
             this.game = game;
             this.player = player;
             this.index = playerControllerIndex;
-
-            //if (playerControllerIndex == 1)
-            //{
-            //    index = PlayerIndex.One;
-            //}
-            //else if (playerControllerIndex == 2)
-            //{
-            //    index = PlayerIndex.Two;
-            //}
-            //else if (playerControllerIndex == 3)
-            //{
-            //    index = PlayerIndex.Three;
-            //}
-            //else if (playerControllerIndex == 4)
-            //{
-            //    index = PlayerIndex.Four;
-            //}
         }
 
         public void Update(GameTime gameTime)
@@ -135,15 +118,16 @@ namespace PrisonStep
                 && lastGamepadState.Buttons.A != ButtonState.Pressed)
             {
                 //no type to pass
-                //Call a function from the player to yell "Exterminate!"
+                //Call a function from the player to jump
+                player.AttemptJump();
             }
 
             if (GamePad.GetState(index).Buttons.B == ButtonState.Pressed
                 && lastGamepadState.Buttons.B != ButtonState.Pressed)
             {
-                game.Fluid.Disturb(new Vector3(50, 0, 50));
                 //no type to pass
-                //Call a function from the player to make them cast thier selected element
+                //Call a function from the player to make them yell "Exterminate!"
+                player.AttempToYellExterminate();
             }
                 
 
