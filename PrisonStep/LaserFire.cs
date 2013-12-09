@@ -73,7 +73,7 @@ namespace PrisonStep
                 Vector3 direction = Vector3.TransformNormal(new Vector3(0, 0, 1), blast.orientation);
                 blast.position += direction * blast.speed * delta;
 
-                if ( updateCount > 10)
+                if ( updateCount > 20)
                 {
                     switch (colorState)
                     {
@@ -101,9 +101,8 @@ namespace PrisonStep
                     {
                         if (game.PlayerPackages[i].Player != blast.owner)
                         {
-                            game.PlayerPackages[i].Player.HitByBlast(blast.color);
+                            game.PlayerPackages[i].Player.HitByBlast(blast.color, blast.owner);
                             laserBlasts.Remove(blastNode);
-                            blast.owner.Kills += 1;
                         }
                     }
                 }

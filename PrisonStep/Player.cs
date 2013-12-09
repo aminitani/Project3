@@ -412,50 +412,60 @@ namespace PrisonStep
             }
         }
 
-        public void HitByBlast(Colors inColor)
+        public void DamagedByPlayer(int healthInc, Player attacker)
+        {
+            int targetHealth = health + healthInc;
+            if (targetHealth <= 0)
+            {
+                attacker.Kills++;
+            }
+            IncrementHealth(healthInc);
+        }
+
+        public void HitByBlast(Colors inColor, Player owner)
         {
             switch (inColor)
             {
                 case Colors.Red:
                     if (colorState == Colors.Blue)
                     {
-                        IncrementHealth(-5);
+                        DamagedByPlayer(-5, owner);
                     }
                     else if (colorState == Colors.Green)
                     {
-                        IncrementHealth(-20);
+                        DamagedByPlayer(-20, owner);
                     }
                     else
                     {
-                        IncrementHealth(-10);
+                        DamagedByPlayer(-10, owner);
                     }
                     break;
                 case Colors.Blue:
                     if (colorState == Colors.Blue)
                     {
-                        IncrementHealth(-10);
+                        DamagedByPlayer(-10, owner);
                     }
                     else if (colorState == Colors.Green)
                     {
-                        IncrementHealth(-5);
+                        DamagedByPlayer(-5, owner);
                     }
                     else
                     {
-                        IncrementHealth(-20);
+                        DamagedByPlayer(-20, owner);
                     }
                     break;
                 case Colors.Green:
                     if (colorState == Colors.Blue)
                     {
-                        IncrementHealth(-20);
+                        DamagedByPlayer(-20, owner);
                     }
                     else if (colorState == Colors.Green)
                     {
-                        IncrementHealth(-10);
+                        DamagedByPlayer(-10, owner);
                     }
                     else
                     {
-                        IncrementHealth(-5);
+                        DamagedByPlayer(-5, owner);
                     }
                     break;
             }
