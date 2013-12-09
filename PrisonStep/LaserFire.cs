@@ -17,9 +17,12 @@ namespace PrisonStep
             public float speed;
             public float life;
             public Player.Colors color;
+            public Player owner;
         }
 
         private PrisonGame game;
+
+        private Player owner;
 
         private Model model;
 
@@ -32,9 +35,10 @@ namespace PrisonStep
 
         private int updateCount = 0;
 
-        public LaserFire(PrisonGame game)
+        public LaserFire(PrisonGame game, Player inPlayer)
         {
             this.game = game;
+            owner = inPlayer;
         }
 
         /// <summary>
@@ -90,6 +94,20 @@ namespace PrisonStep
                 bs.Center = blast.position;
                 bs.Radius = 5;
 
+                for (int i = 0; i < game.PlayerPackages.Count; i++)
+                {
+                    bool collideWithPlayer = game.PlayerPackages[i].Player.PlayerCollision.TestForCollision(bs);
+                    if (collideWithPlayer)
+                    {
+                        if (game.PlayerPackages[i].Player != blast.owner)
+                        {
+                            game.PlayerPackages[i].Player.HitByBlast(blast.color);
+                            laserBlasts.Remove(blastNode);
+                            blast.owner.Kills += 1;
+                        }
+                    }
+                }
+
                 //Decrease life of blast
                 blast.life -= delta;
                 if (blast.life <= 0)
@@ -144,6 +162,7 @@ namespace PrisonStep
             blast.speed = 3000.0f + speed;      // cm/sec
             blast.life = 2.0f;          // 2 seconds
             blast.color = this.colorState;
+            blast.owner = owner;
 
             laserBlasts.AddLast(blast);
         }

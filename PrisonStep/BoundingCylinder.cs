@@ -16,6 +16,8 @@ namespace PrisonStep
         /// </summary>
         private float radius = 50;
 
+        private float height = 100;
+
         private Vector3 location;
 
         public BoundingCylinder(PrisonGame game, Vector3 location)
@@ -31,6 +33,10 @@ namespace PrisonStep
         public bool TestForCollision(BoundingSphere sphere)
         {
             bool collision = false;
+            if (sphere.Center.Y > location.Y + height || sphere.Center.Y < location.Y - 1)
+            {
+                return false;
+            }
             float totalLength = (new Vector2(sphere.Center.X - location.X, sphere.Center.Z - location.Z)).Length();
 
             if (totalLength < radius + sphere.Radius)

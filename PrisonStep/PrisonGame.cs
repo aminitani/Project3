@@ -45,6 +45,7 @@ namespace PrisonStep
         public Ground Ground { get { return ground; } }
 
         private List<PlayerPackage> playerPackages = new List<PlayerPackage>();
+        public List<PlayerPackage> PlayerPackages { get { return playerPackages; } }
 
         //Particle effects
         private RedParticleSystem3d redParticleSystem;

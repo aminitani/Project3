@@ -46,6 +46,11 @@ namespace PrisonStep
         private float armRot = 0.0f;
         private float headRot = 0.0f;
 
+        private int deaths = 0;
+        public int Deaths { get { return deaths; } set { deaths = value; } }
+        private int kills = 0;
+        public int Kills { get { return kills; } set { kills = value; } }
+
         public enum Colors { Red, Green, Blue }
 
         private Colors colorState = Colors.Red;
@@ -65,7 +70,7 @@ namespace PrisonStep
         private Matrix transform;
         public Matrix Transform { get { return transform; } }
 
-        private enum States {Start, Dead}
+        private enum States { Start }
         private States state = States.Start;
 
         /// <summary>
@@ -104,9 +109,9 @@ namespace PrisonStep
             this.game = game;
             this.camera = inCamera;
             dalek = new AnimatedModel(game, "dalek");
-            
+
             playerCollision = new BoundingCylinder(game, location);
-            laserFire = new LaserFire(game);
+            laserFire = new LaserFire(game, this);
 
             SetPlayerTransform();
         }
@@ -265,7 +270,7 @@ namespace PrisonStep
                 deltaTotal -= delta;
             } while (deltaTotal > 0);
 
- 
+
             //do other keyboard based actions
 
             playerCollision.Update(gameTime, location);
@@ -348,17 +353,71 @@ namespace PrisonStep
             laserFire.ColorState = inColor;
         }
 
+        private void Die()
+        {
+            deaths += 1;
+        }
+
         public void IncrementHealth(int healthInc)
         {
             health += healthInc;
             if (health <= 0)
             {
                 health = 0;
-                state = States.Dead;
+                Die();
             }
             else if (health >= 100)
             {
                 health = 100;
+            }
+        }
+
+        public void HitByBlast(Colors inColor)
+        {
+            switch (inColor)
+            {
+                case Colors.Red:
+                    if (colorState == Colors.Blue)
+                    {
+                        IncrementHealth(-5);
+                    }
+                    else if (colorState == Colors.Green)
+                    {
+                        IncrementHealth(-20);
+                    }
+                    else
+                    {
+                        IncrementHealth(-10);
+                    }
+                    break;
+                case Colors.Blue:
+                    if (colorState == Colors.Blue)
+                    {
+                        IncrementHealth(-10);
+                    }
+                    else if (colorState == Colors.Green)
+                    {
+                        IncrementHealth(-5);
+                    }
+                    else
+                    {
+                        IncrementHealth(-20);
+                    }
+                    break;
+                case Colors.Green:
+                    if (colorState == Colors.Blue)
+                    {
+                        IncrementHealth(-20);
+                    }
+                    else if (colorState == Colors.Green)
+                    {
+                        IncrementHealth(-10);
+                    }
+                    else
+                    {
+                        IncrementHealth(-5);
+                    }
+                    break;
             }
         }
     }
