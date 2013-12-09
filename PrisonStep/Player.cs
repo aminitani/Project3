@@ -99,6 +99,8 @@ namespace PrisonStep
         private int health = MAXHEALTH;
         public int Health { get { return health; } }
 
+        private PlayerColorSparkle colorSparkle;
+
         /// <summary>
         /// The collision cylinder for the player
         /// </summary>
@@ -115,6 +117,8 @@ namespace PrisonStep
             this.game = game;
             this.camera = inCamera;
             dalek = new AnimatedModel(game, "dalek");
+
+            this.colorSparkle = new PlayerColorSparkle(this, game);
 
             playerCollision = new BoundingCylinder(game, location);
             laserFire = new LaserFire(game, this);
@@ -190,6 +194,8 @@ namespace PrisonStep
             }
 
             laserFire.Update(gameTime);
+
+            colorSparkle.Update(gameTime);
 
             if (laserDelay < 0.0f)
             {
