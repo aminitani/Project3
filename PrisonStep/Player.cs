@@ -18,8 +18,6 @@ namespace PrisonStep
 
         const int MAXHEALTH = 100;
 
-        private float exterminateDelay = 0.0f;
-
         private float moveSpeed = 1000.0f;
         private float panRate = 4;
 
@@ -89,6 +87,7 @@ namespace PrisonStep
         private LaserFire laserFire;
 
         private float laserDelay = 0.0f;
+        private float exterminateDelay = 0.0f;
 
         private int health = MAXHEALTH;
         public int Health { get { return health; } }
@@ -166,6 +165,15 @@ namespace PrisonStep
                 laserDelay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
+            if (exterminateDelay < 0.0f)
+            {
+                exterminateDelay = 0.0f;
+            }
+            else if (exterminateDelay > 0.0f)
+            {
+                exterminateDelay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+
             float strafe = 0;
             float newOrientation = horizontalOrientation;
             float deltaAngle = 0;
@@ -241,8 +249,6 @@ namespace PrisonStep
                     -70.0f * Right() - 200.0f * Facing();
                 camera.Eye = newCameraLocation;
 
-
-
                 //string regionCamera = TestRegion(newCameraLocation);
 
                 /*if (regionCamera == "")
@@ -280,7 +286,8 @@ namespace PrisonStep
         public void AttempMovement(float horizontal, float vertical, double deltaTime)
         {
             Vector3 newlocation = location + (vertical * FacingWithoutY() + horizontal * Right()) * moveSpeed * (float)deltaTime;
-            location = newlocation;
+            if( (newlocation - Vector3.Zero).Length() < 7000.0f)
+                location = newlocation;
         }
 
 
@@ -303,9 +310,20 @@ namespace PrisonStep
             Matrix tempransform = Matrix.CreateRotationX(verticalOrientation) * Matrix.CreateRotationY(horizontalOrientation);
             //0 added speed for now, won't make a big difference
             laserFire.FireLaser(location + Vector3.Transform(dalek.AbsoTransforms[arm2Index].Translation, Matrix.CreateRotationY(horizontalOrientation)) + 100 * Facing(), tempransform, 0);
+            game.SoundBank.PlayCue("tx0_fire1");
 
             //only fire one per quarter second
             laserDelay = 0.25f;
+        }
+
+        public void AttempToYellExterminate()
+        {
+            if (exterminateDelay > 0.0f)
+                return;
+
+            game.SoundBank.PlayCue("exterminate");
+
+            exterminateDelay = 2.0f;
         }
 
 

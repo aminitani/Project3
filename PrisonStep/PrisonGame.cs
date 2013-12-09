@@ -24,12 +24,28 @@ namespace PrisonStep
         /// This graphics device we are drawing on in this assignment
         /// </summary>
         GraphicsDeviceManager graphics;
-        private Fluid fluid;
+
         /// <summary>
         /// Splash screen states
         /// </summary>
         public enum GameState { splash, game, results };
         GameState current = GameState.splash;
+
+        /// <summary>
+        /// A reference to the audio engine we use
+        /// </summary>
+        AudioEngine audioEngine;
+
+        /// <summary>
+        /// The loaded audio wave bank
+        /// </summary>
+        WaveBank waveBank;
+
+        /// <summary>
+        /// The loaded audio sound bank
+        /// </summary>
+        SoundBank soundBank;
+        public SoundBank SoundBank { get { return soundBank; } }
 
         /// <summary>
         /// Stores the last keyboard state for the game.
@@ -58,16 +74,13 @@ namespace PrisonStep
 
         private GreenParticleSystem3d greenParticleSystem;
         public GreenParticleSystem3d GreenParticleSystem { get { return greenParticleSystem; } }
-        
-        public Fluid Fluid { get { return fluid;} }
 
-        private PSLineDraw lineDraw;
+        private Fluid fluid;
+        public Fluid Fluid { get { return fluid;} }
 
         #endregion
 
         #region Properties
-
-        public PSLineDraw LineDraw { get { return lineDraw; } }
 
         #endregion
 
@@ -156,8 +169,6 @@ namespace PrisonStep
 			this.Window.AllowUserResizing = false;
 			this.graphics.PreferredBackBufferWidth = 1024;
 			this.graphics.PreferredBackBufferHeight = 768;
-
-            this.Components.Add(lineDraw);
         }
 
         /// <summary>
@@ -205,9 +216,13 @@ namespace PrisonStep
         /// </summary>
         protected override void LoadContent()
         {
+            audioEngine = new AudioEngine("Content\\DDRAudio.xgs");
+            waveBank = new WaveBank(audioEngine, "Content\\Wave Bank.xwb");
+            soundBank = new SoundBank(audioEngine, "Content\\Sound Bank.xsb");
+
             skybox.LoadContent(Content);
 
-            wall = Content.Load<Model>("Walls");
+            wall = Content.Load<Model>("borked");
 
             foreach (PlayerPackage pp in playerPackages)
             {
@@ -251,6 +266,8 @@ namespace PrisonStep
                 this.Exit();
 
             base.Update(gameTime);
+
+            audioEngine.Update();
 
             KeyboardState keyboardState = Keyboard.GetState();
             GamePadState gamePadState1 = GamePad.GetState(PlayerIndex.One);
@@ -352,7 +369,7 @@ namespace PrisonStep
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             skybox.Draw(graphics, gameTime, inCamera);
-            DrawModel(graphics, wall, Matrix.Identity, inCamera);
+            DrawModel(graphics, wall, Matrix.CreateScale(1000, 1000, 1000), inCamera);
             ground.Draw(graphics, gameTime, inCamera);
 
             foreach (PlayerPackage pp in playerPackages)
