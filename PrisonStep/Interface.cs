@@ -187,6 +187,8 @@ namespace PrisonStep
                 {
                     player.AttemptShoot();
                 }
+                if (keyboardState.IsKeyDown(Keys.CapsLock))
+                    game.Fluid.Disturb(new Vector3(0, 0, 0));
             };
             lastGamepadState = GamePad.GetState(index);
         }

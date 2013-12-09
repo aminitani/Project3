@@ -149,7 +149,6 @@ namespace PrisonStep
             greenParticleSystem.Blended = false;
 
             fluid = new Fluid(this);
-            fluid.SetConstants(5.2f, 1, 0.016f, 1);
 
             // Some basic setup for the display window
             this.IsMouseVisible = true;

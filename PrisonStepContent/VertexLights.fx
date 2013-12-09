@@ -16,9 +16,10 @@ float4 LightAmbientColor = float4(0.2, 0.2, 0.2, 1);
 
 
 float4 DiffuseColor = float4(0.34f, 0.6f, 0.8f, 1);
-float4 SpecularColor = float4(0.3f, 0.3f, 0.3f, 1);
 
-float SpecularPower = 4;
+float4 SpecularColor = float4(0.34f, 0.6f, 0.8f, 1);
+
+float SpecularPower = 10;
 
 struct VS_INPUT
 {

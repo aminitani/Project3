@@ -52,7 +52,7 @@ namespace PrisonStep
         //distance between vertices
         private float distance = 0;
         private float k1, k2, k3;
-        private float timeStep = 0.016f, waveSpeed = 0.5f, viscosity = 1;
+        private float timeStep = 0.016f, waveSpeed = 3.5f, viscosity = .05f;
         private int[] indices;
         // constrain to rectangular region for now to simplify things
         private float[] region = null;
@@ -79,12 +79,15 @@ namespace PrisonStep
 
             if (distance != 0)
                 spaceStep = distance;
+
             // protect from divergence!
             if (speed < 0)
             {
                 speed = -speed;
             }
+    
             float limit = (float)Math.Sqrt(viscosity * time + 2) * distance / (2 * time);
+
             if (speed > limit)
             {
                 speed -= (speed - limit - 0.01f);
@@ -146,6 +149,8 @@ namespace PrisonStep
             float diffX = vertices[0].Position.X - vertices[numPerDimension + 1].Position.X;
             float diffZ = vertices[0].Position.Z - vertices[numPerDimension + 1].Position.Z;
             distance = (float)Math.Sqrt(diffX * diffX + diffZ * diffZ);
+            // set constants
+            SetConstants(speed, viscosity, timeStep, distance);
 
             // set normals 
             for (int i = 0; i < height; i++)
@@ -274,14 +279,41 @@ namespace PrisonStep
                     Vector2 v = new Vector2(vertices[i * height + j].Position.X, vertices[i * height + j].Position.Z);
                     float d = (float)Math.Sqrt((v.X - p.X) * (v.X - p.X) + (v.Y - p.Y) * (v.Y - p.Y));
 
+                    // if it is close to the disturbance, it must be changed
+                    //--in addition to its eight closest neighbors
                     if (d < TOL)
                     {
-                        positionsBuffer[renderBuffer][i * height + j] -= 1;
+                        DisturbNeighborhood(i, j);
+
+                        
                     }
                 }
             }
         }
-
+        private void DisturbNeighborhood(int i, int j)
+        {
+            positionsBuffer[renderBuffer][i * height + j] -= 1;
+            // neighbor below
+            if (i > 1)
+            {
+                positionsBuffer[renderBuffer][(i - 1) * height + j] -= 0.5f;
+            }
+            //neighbor above
+            if (i < height - 2)
+            {
+                positionsBuffer[renderBuffer][(i + 1) * height + j] -= 0.5f;
+            }
+            //left neighbor
+            if (j > 1)
+            {
+                positionsBuffer[renderBuffer][i * height + j - 1] -= 0.5f;
+            }
+            //right neighbor
+            if (j < width - 2)
+            {
+                positionsBuffer[renderBuffer][i * height + j + 1] -= 0.5f;
+            }
+        }
 
         private void ComputeNormals()
         {
@@ -297,7 +329,7 @@ namespace PrisonStep
                     Vector3 right = j < numPerDimension - 1 ? vertices[i * numPerDimension + j + 1].Position : vertices[i * numPerDimension + j].Position;
 
                     vertices[i * numPerDimension + j].Normal = Vector3.Normalize(Vector3.Cross(right - left, above - below));
-
+                    vertices[i * numPerDimension + j].Normal = normals[i * numPerDimension + j];
                 }
             }
         }
