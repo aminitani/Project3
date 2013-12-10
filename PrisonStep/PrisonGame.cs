@@ -51,11 +51,8 @@ namespace PrisonStep
         /// Stores the last keyboard state for the game.
         /// </summary>
         KeyboardState lastKeyboardState;
-
-        /// <summary>
-        /// Keeps track of the last game pad state
-        /// </summary>
-        GamePadState lastGPS;
+        GamePadState lastGPS1;
+        GamePadState lastGPS2;
 
         private Ground ground;
         public Ground Ground { get { return ground; } }
@@ -372,11 +369,14 @@ namespace PrisonStep
             {
                 if (keyboardState.IsKeyDown(Keys.Tab) && lastKeyboardState.IsKeyUp(Keys.Tab))
                     current = GameState.game;
-
+                if ((gamePadState1.IsButtonDown(Buttons.Start) && lastGPS1.IsButtonUp(Buttons.Start)) || (gamePadState2.IsButtonDown(Buttons.Start) && lastGPS2.IsButtonUp(Buttons.Start)))
+                    current = GameState.game;
             }
             else if (current == GameState.game)
             {
                 if (keyboardState.IsKeyDown(Keys.Tab) && lastKeyboardState.IsKeyUp(Keys.Tab))
+                    current = GameState.results;
+                if ((gamePadState1.IsButtonDown(Buttons.Start) && lastGPS1.IsButtonUp(Buttons.Start)) || (gamePadState2.IsButtonDown(Buttons.Start) && lastGPS2.IsButtonUp(Buttons.Start)))
                     current = GameState.results;
 
                 foreach (PlayerPackage pp in playerPackages)
@@ -414,10 +414,13 @@ namespace PrisonStep
             {
                 if (keyboardState.IsKeyDown(Keys.Tab) && lastKeyboardState.IsKeyUp(Keys.Tab))
                     current = GameState.splash;
+                if ((gamePadState1.IsButtonDown(Buttons.Start) && lastGPS1.IsButtonUp(Buttons.Start)) || (gamePadState2.IsButtonDown(Buttons.Start) && lastGPS2.IsButtonUp(Buttons.Start)))
+                    current = GameState.splash;
             }
 
             lastKeyboardState = keyboardState;
-
+            lastGPS1 = gamePadState1;
+            lastGPS2 = gamePadState2;
         }
 
 
@@ -502,6 +505,8 @@ namespace PrisonStep
                 pp.Player.Draw(graphics, gameTime, inCamera);
             }
 
+            fluid.Draw(graphics.GraphicsDevice, inCamera);
+
             redParticleSystem.Draw(GraphicsDevice, inCamera);
             blueParticleSystem.Draw(GraphicsDevice, inCamera);
             greenParticleSystem.Draw(GraphicsDevice, inCamera);
@@ -509,8 +514,6 @@ namespace PrisonStep
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.BlendState = BlendState.Opaque;
-
-            fluid.Draw(graphics.GraphicsDevice, inCamera);
 
             base.Draw(gameTime);
 
