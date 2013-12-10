@@ -97,8 +97,8 @@ namespace PrisonStep
         private float laserDelay = 0.0f;
         private float exterminateDelay = 0.0f;
 
-        private int health = MAXHEALTH;
-        public int Health { get { return health; } }
+        private float health = MAXHEALTH;
+        public float Health { get { return health; } }
 
         private PlayerColorSparkle colorSparkle;
 
@@ -111,7 +111,7 @@ namespace PrisonStep
         /// <summary>
         /// Counts down to when the player respawns
         /// </summary>
-        private float deathTimer = 5.0f;
+        private float deathTimer = 4.9f;
         public float DeathTimer { get { return deathTimer; } }
 
         /// <summary>
@@ -182,6 +182,8 @@ namespace PrisonStep
             switch (state)
             {
                 case States.Normal:
+                    if (location.X < 100 && location.Y < 100 && location.X > -100 && location.Y > -100)
+                        IncrementHealth(5.0f * (float)deltaTotal);
                     break;
 
                 case States.Jumped:
@@ -428,7 +430,7 @@ namespace PrisonStep
 
         private void Respawn()
         {
-            deathTimer = 5.0f;
+            deathTimer = 4.9f;
             float randX = -3000.0f + (float)random.NextDouble() * (3000.0f - -3000.0f);
             float randZ = -3000.0f + (float)random.NextDouble() * (3000.0f - -3000.0f);
             health = 100;
@@ -436,7 +438,7 @@ namespace PrisonStep
             location = new Vector3(randX, 0, randZ);
         }
 
-        public void IncrementHealth(int healthInc)
+        public void IncrementHealth(float healthInc)
         {
             health += healthInc;
             if (health <= 0)
@@ -452,7 +454,7 @@ namespace PrisonStep
 
         public void DamagedByPlayer(int healthInc, Player attacker)
         {
-            int targetHealth = health + healthInc;
+            float targetHealth = health + healthInc;
             if (targetHealth <= 0)
             {
                 attacker.Kills++;

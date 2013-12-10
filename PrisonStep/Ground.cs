@@ -41,8 +41,8 @@ namespace PrisonStep
             {
                 for (int j = 0; j < scale; j++)
                 {
-                    if (i == (scale - 1) / 2 && j == (scale - 1) / 2)
-                        continue;
+                    //if (i == (scale - 1) / 2 && j == (scale - 1) / 2)
+                    //    continue;
                     DrawModel(graphics, model, Matrix.CreateTranslation(position - new Vector3(0.5f * (float)(scale - 1) * width, 0, 0.5f * (float)(scale - 1) * height) + new Vector3(i * width, 0, j * height)), gameTime, inCamera);
                 }
             }

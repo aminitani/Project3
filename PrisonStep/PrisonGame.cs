@@ -450,7 +450,7 @@ namespace PrisonStep
 
                         spriteBatch.Begin();
                         spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
-                        spriteBatch.DrawString(uIFont, "Health: " + pp.Player.Health.ToString(), new Vector2(10, 30), Color.White);
+                        spriteBatch.DrawString(uIFont, "Health: " + ((int)pp.Player.Health).ToString(), new Vector2(10, 30), Color.White);
                         spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
                         spriteBatch.Draw(elementsPlusTexture, new Vector2(10, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height), Color.White);
                         if (pp.Player.ColorState == Player.Colors.Blue)
@@ -468,7 +468,7 @@ namespace PrisonStep
                         DrawGame(gameTime, pp.Camera);
 
                         spriteBatch.Begin();
-                        spriteBatch.DrawString(uIFont, "Respawn in: " + pp.Player.DeathTimer.ToString(), new Vector2(230, 184), Color.White);
+                        spriteBatch.DrawString(uIFont, "Respawn in: " + ((int)pp.Player.DeathTimer+1).ToString(), new Vector2(230, 184), Color.White);
                         //spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
                         spriteBatch.End();
                         GraphicsDevice.DepthStencilState = DepthStencilState.Default;

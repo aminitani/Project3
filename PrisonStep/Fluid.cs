@@ -30,11 +30,11 @@ namespace PrisonStep
         private const int numPerDimension = 100;
 
         // default values
-        private const float xMin = -2290;
-        private const float xMax = 2290;
-        private const float zMin = -2290;
-        private const float zMax = 2290;
-        private const float y = 5;
+        private const float xMin = -100;
+        private const float xMax = 100;
+        private const float zMin = -100;
+        private const float zMax = 100;
+        private const float y = 15;
 
         private VertexPositionNormalTexture[] vertices;
         // vectors for the previous and current positions of the vertices
