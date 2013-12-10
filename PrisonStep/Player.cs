@@ -19,7 +19,8 @@ namespace PrisonStep
         int index;
         PlayerIndex playerIndex;
 
-        const int MAXHEALTH = 100;
+        private const int MAXHEALTH = 100;
+        public int MaxHealth { get { return MAXHEALTH; } }
 
         private float moveSpeed = 1000.0f;
         private float panRate = 4;

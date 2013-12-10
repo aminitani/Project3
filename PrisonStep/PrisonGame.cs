@@ -103,6 +103,8 @@ namespace PrisonStep
         public Texture2D ElementsPlusTexture { get { return elementsPlusTexture; } }
         private Texture2D ringTexture;
         public Texture2D RingTexture { get { return ringTexture; } }
+        private Texture2D healthBar;
+        public Texture2D HealthBar { get { return healthBar; } }
 
         private Skybox skybox;
 
@@ -330,6 +332,7 @@ namespace PrisonStep
             crosshairTexture = Content.Load<Texture2D>("crosshair");
             elementsPlusTexture = Content.Load<Texture2D>("ElementSelectPlus");
             ringTexture = Content.Load<Texture2D>("ring");
+            healthBar = Content.Load<Texture2D>("healthBar");
         }
 
         /// <summary>
@@ -449,8 +452,6 @@ namespace PrisonStep
                         DrawGame(gameTime, pp.Camera);
 
                         spriteBatch.Begin();
-                        spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
-                        spriteBatch.DrawString(uIFont, "Health: " + ((int)pp.Player.Health).ToString(), new Vector2(10, 30), Color.White);
                         spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
                         spriteBatch.Draw(elementsPlusTexture, new Vector2(10, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height), Color.White);
                         if (pp.Player.ColorState == Player.Colors.Blue)
@@ -459,7 +460,10 @@ namespace PrisonStep
                             spriteBatch.Draw(ringTexture, new Vector2(10 + 1, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 44), Color.White);
                         else //if (pp.Player.ColorState == Player.Colors.Green)
                             spriteBatch.Draw(ringTexture, new Vector2(10 + elementsPlusTexture.Width - 1 - ringTexture.Width, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 44), Color.White);
-                        spriteBatch.End();
+                        spriteBatch.Draw(healthBar, new Vector2(10, 10), new Rectangle(healthBar.Height / 2, healthBar.Width, healthBar.Width, healthBar.Height / 2), Color.Black);
+                        spriteBatch.Draw(healthBar, new Vector2(10, 10), new Rectangle(healthBar.Height, healthBar.Width, (int)(healthBar.Width * pp.Player.Health / pp.Player.MaxHealth), healthBar.Height / 2), Color.Red);
+ 
+                         spriteBatch.End();
                         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                     }
                     else
