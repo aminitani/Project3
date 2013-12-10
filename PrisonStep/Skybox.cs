@@ -32,7 +32,7 @@ namespace PrisonStep
 
         public void Draw(GraphicsDeviceManager graphics, GameTime gameTime, Camera inCamera)
         {
-            DrawModel(graphics, model, Matrix.CreateTranslation(position) * Matrix.CreateRotationY((float)Math.PI/2) * Matrix.CreateScale(10, 10, 10), gameTime, inCamera);
+            DrawModel(graphics, model, Matrix.CreateTranslation(position) * Matrix.CreateRotationY((float)Math.PI/2) * Matrix.CreateScale(20, 20, 20), gameTime, inCamera);
         }
 
         private void DrawModel(GraphicsDeviceManager graphics, Model model, Matrix world, GameTime gameTime, Camera inCamera)
