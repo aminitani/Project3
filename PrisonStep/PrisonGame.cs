@@ -454,11 +454,11 @@ namespace PrisonStep
                         spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
                         spriteBatch.Draw(elementsPlusTexture, new Vector2(10, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height), Color.White);
                         if (pp.Player.ColorState == Player.Colors.Blue)
-                            spriteBatch.Draw(ringTexture, new Vector2(10 + 46, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 3), Color.White);
+                            spriteBatch.Draw(ringTexture, new Vector2(10 + 44, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 1), Color.White);
                         else if (pp.Player.ColorState == Player.Colors.Red)
-                            spriteBatch.Draw(ringTexture, new Vector2(10 + 3, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 46), Color.White);
+                            spriteBatch.Draw(ringTexture, new Vector2(10 + 1, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 44), Color.White);
                         else //if (pp.Player.ColorState == Player.Colors.Green)
-                            spriteBatch.Draw(ringTexture, new Vector2(10 + elementsPlusTexture.Width - 3 - ringTexture.Width, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 46), Color.White);
+                            spriteBatch.Draw(ringTexture, new Vector2(10 + elementsPlusTexture.Width - 1 - ringTexture.Width, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 44), Color.White);
                         spriteBatch.End();
                         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                     }
@@ -497,7 +497,7 @@ namespace PrisonStep
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             skybox.Draw(graphics, gameTime, inCamera);
-            DrawModel(graphics, wall, Matrix.CreateScale(1000, 1000, 1000), inCamera);
+            DrawModel(graphics, wall, Matrix.CreateRotationY((float)Math.PI) * Matrix.CreateScale(1000, 1000, 1000), inCamera);
             ground.Draw(graphics, gameTime, inCamera);
 
             foreach (PlayerPackage pp in playerPackages)

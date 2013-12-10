@@ -374,6 +374,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="ring.png">
       <Name>ring</Name>
       <Importer>TextureImporter</Importer>
