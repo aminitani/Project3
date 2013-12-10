@@ -78,6 +78,9 @@ namespace PrisonStep
         private Fluid fluid;
         public Fluid Fluid { get { return fluid;} }
 
+        private List<Vector3> spawnPoints = new List<Vector3>();
+        public List<Vector3> SpawnPoints { get { return spawnPoints; } }
+
         #endregion
 
         #region Properties
@@ -118,6 +121,12 @@ namespace PrisonStep
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
+            //create spawn points
+            spawnPoints.Add(new Vector3(1000, 0, 1000));
+            spawnPoints.Add(new Vector3(1000, 0, -1000));
+            spawnPoints.Add(new Vector3(-1000, 0, -1000));
+            spawnPoints.Add(new Vector3(-1000, 0, 1000));
+
             skybox = new Skybox(this);
 
             // player
@@ -131,7 +140,7 @@ namespace PrisonStep
                 tempCam.FieldOfView = MathHelper.ToRadians(42);
                 templayerPackage.Camera = tempCam;
 
-                templayerPackage.Spawn = new Vector3(1000, 0, 0);
+                templayerPackage.Spawn = spawnPoints[i];
 
                 Player templayer = new Player(this, tempCam, i);
                 templayer.Location = templayerPackage.Spawn;
