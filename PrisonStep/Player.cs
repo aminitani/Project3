@@ -75,8 +75,9 @@ namespace PrisonStep
         private Matrix transform;
         public Matrix Transform { get { return transform; } }
 
-        private enum States { Normal, Jumped, Died }
+        public enum States { Normal, Jumped, Died }
         private States state = States.Normal;
+        public States State { get { return state; } }
 
         /// <summary>
         /// Our animated model
@@ -99,13 +100,24 @@ namespace PrisonStep
         private int health = MAXHEALTH;
         public int Health { get { return health; } }
 
+        private PlayerColorSparkle colorSparkle;
+
         /// <summary>
         /// The collision cylinder for the player
         /// </summary>
         private BoundingCylinder playerCollision;
         public BoundingCylinder PlayerCollision { get { return playerCollision; } }
 
+        /// <summary>
+        /// Counts down to when the player respawns
+        /// </summary>
+        private float deathTimer = 5.0f;
+        public float DeathTimer { get { return deathTimer; } }
 
+        /// <summary>
+        /// Generates a random number for respawning in a random location
+        /// </summary>
+        private static Random random = new Random();
 
         #endregion
 
@@ -115,6 +127,8 @@ namespace PrisonStep
             this.game = game;
             this.camera = inCamera;
             dalek = new AnimatedModel(game, "dalek");
+
+            this.colorSparkle = new PlayerColorSparkle(this, game);
 
             playerCollision = new BoundingCylinder(game, location);
             laserFire = new LaserFire(game, this);
@@ -186,10 +200,17 @@ namespace PrisonStep
                     break;
 
                 case States.Died:
+                    deathTimer -= (float)deltaTotal;
+                    if (deathTimer <= 0.0f)
+                    {
+                        Respawn();
+                    }
                     break;
             }
 
             laserFire.Update(gameTime);
+
+            colorSparkle.Update(gameTime);
 
             if (laserDelay < 0.0f)
             {
@@ -244,10 +265,20 @@ namespace PrisonStep
                 //camera.Center = location + new Vector3(0, 100, 0);
                 //Vector3 newCameraLocation = location + new Vector3(300, 100, 0);
                 //camera.Eye = newCameraLocation;
-                camera.Center = location + new Vector3(0, 90, 0) + 1000 * Facing();
-                Vector3 newCameraLocation = location + new Vector3(0, 120, 0) +
-                    -70.0f * Right() - 200.0f * Facing();
-                camera.Eye = newCameraLocation;
+                if (state != States.Died)
+                {
+                    camera.Center = location + new Vector3(0, 90, 0) + 1000 * Facing();
+                    Vector3 newCameraLocation = location + new Vector3(0, 120, 0) +
+                        -70.0f * Right() - 200.0f * Facing();
+                    camera.Eye = newCameraLocation;
+                }
+                else
+                {
+                    camera.Center = new Vector3(0, 0, 0);//location + new Vector3(0, 90, 0) + 1000 * Facing();
+                    Vector3 newCameraLocation = new Vector3(0, 100, 0);//location + new Vector3(0, 120, 0) +
+                        //-70.0f * Right() - 200.0f * Facing();
+                    camera.Eye = newCameraLocation;
+                }
 
                 //string regionCamera = TestRegion(newCameraLocation);
 
@@ -390,6 +421,19 @@ namespace PrisonStep
         private void Die()
         {
             deaths += 1;
+            game.DalekExpParticleSystem.AddParticles(Location + new Vector3(0, 100, 0));
+            location = new Vector3(200, -200, 0);
+            state = States.Died;
+        }
+
+        private void Respawn()
+        {
+            deathTimer = 5.0f;
+            float randX = -3000.0f + (float)random.NextDouble() * (3000.0f - -3000.0f);
+            float randZ = -3000.0f + (float)random.NextDouble() * (3000.0f - -3000.0f);
+            health = 100;
+            state = States.Normal;
+            location = new Vector3(randX, 0, randZ);
         }
 
         public void IncrementHealth(int healthInc)
@@ -406,50 +450,60 @@ namespace PrisonStep
             }
         }
 
-        public void HitByBlast(Colors inColor)
+        public void DamagedByPlayer(int healthInc, Player attacker)
+        {
+            int targetHealth = health + healthInc;
+            if (targetHealth <= 0)
+            {
+                attacker.Kills++;
+            }
+            IncrementHealth(healthInc);
+        }
+
+        public void HitByBlast(Colors inColor, Player owner)
         {
             switch (inColor)
             {
                 case Colors.Red:
                     if (colorState == Colors.Blue)
                     {
-                        IncrementHealth(-5);
+                        DamagedByPlayer(-5, owner);
                     }
                     else if (colorState == Colors.Green)
                     {
-                        IncrementHealth(-20);
+                        DamagedByPlayer(-20, owner);
                     }
                     else
                     {
-                        IncrementHealth(-10);
+                        DamagedByPlayer(-10, owner);
                     }
                     break;
                 case Colors.Blue:
                     if (colorState == Colors.Blue)
                     {
-                        IncrementHealth(-10);
+                        DamagedByPlayer(-10, owner);
                     }
                     else if (colorState == Colors.Green)
                     {
-                        IncrementHealth(-5);
+                        DamagedByPlayer(-5, owner);
                     }
                     else
                     {
-                        IncrementHealth(-20);
+                        DamagedByPlayer(-20, owner);
                     }
                     break;
                 case Colors.Green:
                     if (colorState == Colors.Blue)
                     {
-                        IncrementHealth(-20);
+                        DamagedByPlayer(-20, owner);
                     }
                     else if (colorState == Colors.Green)
                     {
-                        IncrementHealth(-10);
+                        DamagedByPlayer(-10, owner);
                     }
                     else
                     {
-                        IncrementHealth(-5);
+                        DamagedByPlayer(-5, owner);
                     }
                     break;
             }

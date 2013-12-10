@@ -362,13 +362,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ElementSelectPlus.png">
-      <Name>ElementSelectPlus</Name>
+    <Compile Include="ExplosionParticle.bmp">
+      <Name>ExplosionParticle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ElementSelectPlus.png">
+      <Name>ElementSelectPlus</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="ring.png">
       <Name>ring</Name>
       <Importer>TextureImporter</Importer>

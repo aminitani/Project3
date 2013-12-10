@@ -173,6 +173,24 @@ namespace PrisonStep
                 }
                 if (keyboardState.IsKeyDown(Keys.CapsLock))
                     game.Fluid.Disturb(new Vector3(0, 0, 0));
+
+                if (keyboardState.IsKeyDown(Keys.LeftControl))
+                {
+                    player.AttemptJump();
+                }
+
+                if (keyboardState.IsKeyDown(Keys.D1))
+                {
+                    player.ChangeColor(Player.Colors.Red);
+                }
+                if (keyboardState.IsKeyDown(Keys.D2))
+                {
+                    player.ChangeColor(Player.Colors.Green);
+                }
+                if (keyboardState.IsKeyDown(Keys.D3))
+                {
+                    player.ChangeColor(Player.Colors.Blue);
+                }
             };
             lastGamepadState = GamePad.GetState(index);
         }

@@ -75,6 +75,9 @@ namespace PrisonStep
         private GreenParticleSystem3d greenParticleSystem;
         public GreenParticleSystem3d GreenParticleSystem { get { return greenParticleSystem; } }
 
+        private DExpParticleSystem3d dalekExpParticleSystem;
+        public DExpParticleSystem3d DalekExpParticleSystem { get { return dalekExpParticleSystem; } }
+
         private Fluid fluid;
         public Fluid Fluid { get { return fluid;} }
 
@@ -165,6 +168,9 @@ namespace PrisonStep
             greenParticleSystem = new GreenParticleSystem3d(8);
             greenParticleSystem.Blended = false;
 
+            dalekExpParticleSystem = new DExpParticleSystem3d(5);
+            dalekExpParticleSystem.Blended = false;
+
             fluid = new Fluid(this);
 
             // Some basic setup for the display window
@@ -172,6 +178,86 @@ namespace PrisonStep
 			this.Window.AllowUserResizing = false;
 			this.graphics.PreferredBackBufferWidth = 1024;
 			this.graphics.PreferredBackBufferHeight = 768;
+
+
+
+            //QUIZ 3 stuff
+            //q1
+                Quaternion q = Quaternion.CreateFromAxisAngle(new Vector3(-0.43f, 0.02f, -0.42f), 2.39f);
+
+            //q2
+                Matrix Base = Matrix.Identity;
+                Matrix wheel = new Matrix(1, 0, 0, 0,
+                                            0, 0, 1, 0,
+                                            0, -1, 0, 0,
+                                            0, 592, 0, 1);
+                Matrix seat1 = new Matrix(0, 1, 0, 0,
+                                            -1, 0, 0, 0,
+                                            0, 0, 1, 0,
+                                            496, 0, 0, 1);
+
+                Matrix point = Matrix.Identity;
+                point.Translation = new Vector3(14.01f,14.85f,17.29f);
+
+                Vector3 ans = (point * seat1 * wheel * Base).Translation;
+
+            //q3
+                float r = 15f;
+                float w = 5.2f;
+                double theta = Math.PI/2 - Math.Atan2(r, w);
+
+            //q4
+                Vector3 v1 = new Vector3(0f,0f,0f);
+                Vector3 v2 = new Vector3(118.0f, 116.0f, 172.0f);
+                Vector3 v3 = new Vector3(-102.0f, 100.0f, 172.0f);
+
+                Vector3 triPoint = new Vector3(75.5f, 88.2f, 132.4f);
+
+                float d = 1.0f / ((v1.X - v3.X) * (v2.Y - v3.Y) - (v2.X - v3.X) * (v1.Y - v3.Y));
+                float l1 = ((v2.Y - v3.Y) * (triPoint.X - v3.X) + (v3.X - v2.X) * (triPoint.Y - v3.Y)) * d;
+                float l2 = ((v3.Y - v1.Y) * (triPoint.X - v3.X) + (v1.X - v3.X) * (triPoint.Y - v3.Y)) * d;
+                float l3 = 1 - l1 - l2;
+
+                Vector3 q4ans = new Vector3(l1, l2, l3);
+
+            //q5
+            //(p3.z-p2.z, 0, p2.x-p3.x)
+
+            //q6
+            float t = 10;
+            Vector3 rayStart = new Vector3(471, 928, -255);
+            Vector3 rayDirection = new Vector3(-0.385f, 0.578f, -0.720f);
+
+            Vector3 q6Answer = rayStart + t * rayDirection;
+
+            //q7
+            Matrix q7point = Matrix.Identity;
+            q7point.Translation = new Vector3(146f, 149.00f, 138.00f);
+
+            Matrix basePose1 = Matrix.Identity;
+            basePose1.Translation = new Vector3(10, 0, 0);
+            Matrix basePose2 = Matrix.Identity;
+            basePose2.Translation = new Vector3(20, 0, 0);
+            Matrix ltow1 = Matrix.Identity;
+            ltow1.Translation = new Vector3(15.6f, 3.99f, 4.56f);
+            Matrix ltow2 = Matrix.Identity;
+            ltow2.Translation = new Vector3(26.37f, 6.65f, 6.7f);
+            float weight1 = .3f;
+            float weight2 = .7f;
+
+            Vector3 q7ans = (weight1 * q7point * Matrix.Invert(basePose1) * ltow1).Translation + (weight2 * q7point * Matrix.Invert(basePose2) * ltow2).Translation;
+            
+            //q8
+            //third row
+
+            //q9
+            //guess
+
+            //q10
+            //give up
+
+
+            int nothing = 0;
         }
 
         /// <summary>
@@ -237,6 +323,7 @@ namespace PrisonStep
             redParticleSystem.LoadContent(Content);
             blueParticleSystem.LoadContent(Content);
             greenParticleSystem.LoadContent(Content);
+            dalekExpParticleSystem.LoadContent(Content);
 
             fluid.LoadContent(Content);
 
@@ -295,6 +382,10 @@ namespace PrisonStep
                 foreach (PlayerPackage pp in playerPackages)
                 {
                     pp.PlayerInterface.Update(gameTime);
+                    if (pp.Player.Location.Y >= 0)
+                    {
+                        fluid.Disturb(pp.Player.Location);
+                    }
                 }
 
                 skybox.Update(gameTime);
@@ -315,6 +406,7 @@ namespace PrisonStep
                 redParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
                 blueParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
                 greenParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
+                dalekExpParticleSystem.Update(gameTime.ElapsedGameTime.TotalSeconds);
 
                 fluid.Update(gameTime);
             }
@@ -348,30 +440,51 @@ namespace PrisonStep
 
                 foreach (PlayerPackage pp in playerPackages)
                 {
-                    GraphicsDevice.Viewport = pp.Camera.Viewport;
-                    DrawGame(gameTime, pp.Camera);
+                    if (pp.Player.State != Player.States.Died)
+                    {
+                        GraphicsDevice.Viewport = pp.Camera.Viewport;
+                        DrawGame(gameTime, pp.Camera);
 
-                    spriteBatch.Begin();
-                    spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
-                    spriteBatch.DrawString(uIFont, "Health: " + pp.Player.Health.ToString(), new Vector2(10, 20), Color.White);
-                    spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
-                    spriteBatch.Draw(elementsPlusTexture, new Vector2(10, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height), Color.White);
-                    if(pp.Player.ColorState == Player.Colors.Blue)
-                        spriteBatch.Draw(ringTexture, new Vector2(10 + 46, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 3), Color.White);
-                    else if(pp.Player.ColorState == Player.Colors.Red)
-                        spriteBatch.Draw(ringTexture, new Vector2(10 + 3, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 46), Color.White);
-                    else //if (pp.Player.ColorState == Player.Colors.Green)
-                        spriteBatch.Draw(ringTexture, new Vector2(10 + elementsPlusTexture.Width - 3 - ringTexture.Width, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 46), Color.White);
-                    spriteBatch.End();
-                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                        spriteBatch.Begin();
+                        spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
+                        spriteBatch.DrawString(uIFont, "Health: " + pp.Player.Health.ToString(), new Vector2(10, 30), Color.White);
+                        spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
+                        spriteBatch.Draw(elementsPlusTexture, new Vector2(10, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height), Color.White);
+                        if (pp.Player.ColorState == Player.Colors.Blue)
+                            spriteBatch.Draw(ringTexture, new Vector2(10 + 46, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 3), Color.White);
+                        else if (pp.Player.ColorState == Player.Colors.Red)
+                            spriteBatch.Draw(ringTexture, new Vector2(10 + 3, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 46), Color.White);
+                        else //if (pp.Player.ColorState == Player.Colors.Green)
+                            spriteBatch.Draw(ringTexture, new Vector2(10 + elementsPlusTexture.Width - 3 - ringTexture.Width, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 46), Color.White);
+                        spriteBatch.End();
+                        GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    }
+                    else
+                    {
+                        GraphicsDevice.Viewport = pp.Camera.Viewport;
+                        DrawGame(gameTime, pp.Camera);
+
+                        spriteBatch.Begin();
+                        spriteBatch.DrawString(uIFont, "Respawn in: " + pp.Player.DeathTimer.ToString(), new Vector2(230, 184), Color.White);
+                        //spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
+                        spriteBatch.End();
+                        GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    }
                 }
             }
             else if (current == GameState.results)
             {
-                spriteBatch.Begin();
-                spriteBatch.DrawString(uIFont, "You are dead and all your friends are dead.", new Vector2(10, 10), Color.White);
-                spriteBatch.End();
-                GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                foreach (PlayerPackage pp in playerPackages)
+                {
+                    GraphicsDevice.Viewport = pp.Camera.Viewport;
+
+                    spriteBatch.Begin();
+                    spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
+                    spriteBatch.DrawString(uIFont, "Kills: " + pp.Player.Kills.ToString(), new Vector2(10, 30), Color.White);
+                    spriteBatch.DrawString(uIFont, "Deaths: " + pp.Player.Deaths.ToString(), new Vector2(10, 50), Color.White);
+                    spriteBatch.End();
+                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                }
             }
         }
 
@@ -392,6 +505,7 @@ namespace PrisonStep
             redParticleSystem.Draw(GraphicsDevice, inCamera);
             blueParticleSystem.Draw(GraphicsDevice, inCamera);
             greenParticleSystem.Draw(GraphicsDevice, inCamera);
+            dalekExpParticleSystem.Draw(GraphicsDevice, inCamera);
 
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.BlendState = BlendState.Opaque;

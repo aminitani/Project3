@@ -118,8 +118,10 @@
     <Compile Include="AnimationPlayer.cs" />
     <Compile Include="BoundingCylinder.cs" />
     <Compile Include="BlueParticleSystem3d.cs" />
+    <Compile Include="DExpParticleSystem3d.cs" />
     <Compile Include="Fluid.cs" />
     <Compile Include="GreenParticleSystem3d.cs" />
+    <Compile Include="PlayerColorSparkle.cs" />
     <Compile Include="RedParticleSystem3d.cs" />
     <Compile Include="Ground.cs" />
     <Compile Include="Interface.cs" />

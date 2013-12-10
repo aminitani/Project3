@@ -30,10 +30,10 @@ namespace PrisonStep
         private const int numPerDimension = 100;
 
         // default values
-        private const float xMin = -100;
-        private const float xMax = 100;
-        private const float zMin = -100;
-        private const float zMax = 100;
+        private const float xMin = -300;
+        private const float xMax = 300;
+        private const float zMin = -300;
+        private const float zMax = 300;
         private const float y = 5;
 
         private VertexPositionNormalTexture[] vertices;
@@ -52,7 +52,7 @@ namespace PrisonStep
         //distance between vertices
         private float distance = 0;
         private float k1, k2, k3;
-        private float timeStep = 0.016f, waveSpeed = 3.5f, viscosity = .05f;
+        private float timeStep = 0.08f, waveSpeed =.5f, viscosity = .05f;
         private int[] indices;
         // constrain to rectangular region for now to simplify things
         private float[] region = null;
