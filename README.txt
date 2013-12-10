@@ -18,9 +18,11 @@ Using Zach's Project 2
 Playing
 ----------------
 wasd moves, arrow keys aim, space shoots
-controllers allow two players to play
+xbox controllers allow two players to play
 
 shoot other player to get points
 if you get shot you lose health
 the damage done depends on the color of the shot and the active color of the person who gets shot
 if you die you wait to respawn
+the fluid pool heals you if you stand in it
+vibration is really cool

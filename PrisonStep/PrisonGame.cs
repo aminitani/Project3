@@ -131,7 +131,7 @@ namespace PrisonStep
 
                 templayerPackage.Spawn = new Vector3(1000, 0, 0);
 
-                Player templayer = new Player(this, tempCam);
+                Player templayer = new Player(this, tempCam, i);
                 templayer.Location = templayerPackage.Spawn;
                 templayerPackage.Player = templayer;
 

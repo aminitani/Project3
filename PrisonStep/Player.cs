@@ -16,6 +16,9 @@ namespace PrisonStep
     {
         #region Fields
 
+        int index;
+        PlayerIndex playerIndex;
+
         const int MAXHEALTH = 100;
 
         private float moveSpeed = 1000.0f;
@@ -96,6 +99,7 @@ namespace PrisonStep
 
         private float laserDelay = 0.0f;
         private float exterminateDelay = 0.0f;
+        private float vibrateLife = 0.0f;
 
         private float health = MAXHEALTH;
         public float Health { get { return health; } }
@@ -122,10 +126,19 @@ namespace PrisonStep
         #endregion
 
 
-        public Player(PrisonGame game, Camera inCamera)
+        public Player(PrisonGame game, Camera inCamera, int index)
         {
             this.game = game;
             this.camera = inCamera;
+            this.index = index;
+            if (index == 0)
+                this.playerIndex = PlayerIndex.One;
+            if (index == 1)
+                this.playerIndex = PlayerIndex.Two;
+            if (index == 2)
+                this.playerIndex = PlayerIndex.Three;
+            if (index == 3)
+                this.playerIndex = PlayerIndex.Four;
             dalek = new AnimatedModel(game, "dalek");
 
             this.colorSparkle = new PlayerColorSparkle(this, game);
@@ -230,6 +243,16 @@ namespace PrisonStep
             else if (exterminateDelay > 0.0f)
             {
                 exterminateDelay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            }
+
+            if (vibrateLife < 0.0f)
+            {
+                vibrateLife = 0.0f;
+                GamePad.SetVibration(playerIndex, 0.0f, 0.0f);
+            }
+            else if (vibrateLife > 0.0f)
+            {
+                vibrateLife -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
 
             do
@@ -417,7 +440,6 @@ namespace PrisonStep
         public void ChangeColor(Player.Colors inColor)
         {
             colorState = inColor;
-            laserFire.ColorState = inColor;
         }
 
         private void Die()
@@ -464,6 +486,9 @@ namespace PrisonStep
 
         public void HitByBlast(Colors inColor, Player owner)
         {
+            GamePad.SetVibration(playerIndex, 1.0f, 1.0f);
+            vibrateLife = .25f;
+
             switch (inColor)
             {
                 case Colors.Red:

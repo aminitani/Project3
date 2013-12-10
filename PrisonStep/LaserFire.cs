@@ -28,8 +28,8 @@ namespace PrisonStep
 
         private LinkedList<LaserBlast> laserBlasts = new LinkedList<LaserBlast>();
 
-        private Player.Colors colorState = Player.Colors.Blue;
-        public Player.Colors ColorState { get { return colorState; } set { colorState = value; } }
+        //private Player.Colors colorState = Player.Colors.Blue;
+        //public Player.Colors ColorState { get { return colorState; } set { colorState = value; } }
 
         public LinkedList<LaserBlast> LaserBlasts { get { return laserBlasts; } }
 
@@ -75,7 +75,7 @@ namespace PrisonStep
 
                 if ( updateCount > 20)
                 {
-                    switch (colorState)
+                    switch (blast.color)
                     {
                         case (Player.Colors.Red):
                             game.RedParticleSystem.AddParticles(blast.position);
@@ -160,7 +160,7 @@ namespace PrisonStep
             blast.orientation = orientation;
             blast.speed = 3000.0f + speed;      // cm/sec
             blast.life = 2.0f;          // 2 seconds
-            blast.color = this.colorState;
+            blast.color = owner.ColorState;
             blast.owner = owner;
 
             laserBlasts.AddLast(blast);
