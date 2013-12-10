@@ -44,8 +44,8 @@ namespace PrisonStep
             minScale = 1.0f;
             maxScale = 5.0f;
 
-            minNumParticles = 400;
-            maxNumParticles = 500;
+            minNumParticles = 50;
+            maxNumParticles = 100;
 
             // rotate
             minRotationSpeed = -MathHelper.PiOver2;

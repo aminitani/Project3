@@ -103,6 +103,7 @@ namespace PrisonStep
                         {
                             game.PlayerPackages[i].Player.HitByBlast(blast.color, blast.owner);
                             laserBlasts.Remove(blastNode);
+                            break;
                         }
                     }
                 }
