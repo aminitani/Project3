@@ -158,16 +158,16 @@ namespace PrisonStep
             ground = new Ground(this);
 
             //Particle system
-            redParticleSystem = new RedParticleSystem3d(8);
+            redParticleSystem = new RedParticleSystem3d(100);
             redParticleSystem.Blended = false;
 
-            blueParticleSystem = new BlueParticleSystem3d(8);
+            blueParticleSystem = new BlueParticleSystem3d(100);
             blueParticleSystem.Blended = false;
 
-            greenParticleSystem = new GreenParticleSystem3d(8);
+            greenParticleSystem = new GreenParticleSystem3d(100);
             greenParticleSystem.Blended = false;
 
-            dalekExpParticleSystem = new DExpParticleSystem3d(5);
+            dalekExpParticleSystem = new DExpParticleSystem3d(100);
             dalekExpParticleSystem.Blended = false;
 
             fluid = new Fluid(this);
@@ -452,6 +452,8 @@ namespace PrisonStep
                         DrawGame(gameTime, pp.Camera);
 
                         spriteBatch.Begin();
+                        spriteBatch.Draw(healthBar, new Vector2(10, 10), new Rectangle(healthBar.Height / 2, healthBar.Width, healthBar.Width, healthBar.Height / 2), Color.Black);
+                        spriteBatch.Draw(healthBar, new Vector2(10, 10), new Rectangle(healthBar.Height, healthBar.Width, (int)(healthBar.Width * pp.Player.Health / pp.Player.MaxHealth), healthBar.Height / 2), Color.Red);
                         spriteBatch.Draw(crosshairTexture, new Vector2(GraphicsDevice.Viewport.Width / 2 - crosshairTexture.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2 - crosshairTexture.Height / 2), Color.White);
                         spriteBatch.Draw(elementsPlusTexture, new Vector2(10, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height), Color.White);
                         if (pp.Player.ColorState == Player.Colors.Blue)
@@ -459,9 +461,9 @@ namespace PrisonStep
                         else if (pp.Player.ColorState == Player.Colors.Red)
                             spriteBatch.Draw(ringTexture, new Vector2(10 + 1, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 44), Color.White);
                         else //if (pp.Player.ColorState == Player.Colors.Green)
+                        {
                             spriteBatch.Draw(ringTexture, new Vector2(10 + elementsPlusTexture.Width - 1 - ringTexture.Width, graphics.GraphicsDevice.Viewport.Height - 10 - elementsPlusTexture.Height + 44), Color.White);
-                        spriteBatch.Draw(healthBar, new Vector2(10, 10), new Rectangle(healthBar.Height / 2, healthBar.Width, healthBar.Width, healthBar.Height / 2), Color.Black);
-                        spriteBatch.Draw(healthBar, new Vector2(10, 10), new Rectangle(healthBar.Height, healthBar.Width, (int)(healthBar.Width * pp.Player.Health / pp.Player.MaxHealth), healthBar.Height / 2), Color.Red);
+                        }
  
                          spriteBatch.End();
                         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -486,7 +488,6 @@ namespace PrisonStep
                     GraphicsDevice.Viewport = pp.Camera.Viewport;
 
                     spriteBatch.Begin();
-                    spriteBatch.DrawString(uIFont, "Score: " + pp.Player.Score.ToString(), new Vector2(10, 10), Color.White);
                     spriteBatch.DrawString(uIFont, "Kills: " + pp.Player.Kills.ToString(), new Vector2(10, 30), Color.White);
                     spriteBatch.DrawString(uIFont, "Deaths: " + pp.Player.Deaths.ToString(), new Vector2(10, 50), Color.White);
                     spriteBatch.End();

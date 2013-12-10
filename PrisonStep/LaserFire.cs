@@ -73,7 +73,7 @@ namespace PrisonStep
                 Vector3 direction = Vector3.TransformNormal(new Vector3(0, 0, 1), blast.orientation);
                 blast.position += direction * blast.speed * delta;
 
-                if ( updateCount > 20)
+                if ( updateCount > 10)
                 {
                     switch (blast.color)
                     {

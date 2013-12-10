@@ -37,12 +37,12 @@ namespace PrisonStep
             time %= ((float)Math.PI * 2);
             updateCount++;
 
-            if (updateCount > 15)
+            if (updateCount > 4)
             {
 
                 Vector3 sparkleLoc = player.Location + new Vector3(0, 80, 0);
                 sparkleLoc += new Vector3(0, 4*sparkleDistance/5 * (float)Math.Sin(time), 0);
-                sparkleLoc += new Vector3(sparkleDistance * (float)Math.Cos(time), 0, sparkleDistance *(float)Math.Sin(time));
+                sparkleLoc += new Vector3(sparkleDistance * (float)Math.Cos(time * 3f), 0, sparkleDistance *(float)Math.Sin(time * 3f));
                 switch (player.ColorState)
                 {
                     case Player.Colors.Red:
